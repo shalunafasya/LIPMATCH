@@ -1,3 +1,51 @@
+<style>
+    /* Style header tabel */
+    #dataTable thead tr {
+        background-color: #F7C6D1 ; 
+        color: #5A2A3A ; /* coklat gelap */
+        font-weight: 700;
+        border-bottom: 3px solid #EA84B4; 
+    }
+
+    /* Style teks header */
+    #dataTable thead th {
+        padding: 12px 15px;
+        text-align: left;
+        letter-spacing: 0.05em;
+    }
+
+    /* Border kanan di th */
+    #dataTable thead th {
+        border-right: 1px solid #d6a7b8;
+    }
+
+    /* Hilangkan border kanan di th terakhir */
+    #dataTable thead th:last-child {
+        border-right: none;
+    }
+
+    /* Baris zebra */
+    #dataTable tbody tr:nth-child(even) {
+        background-color: #fff0f5; /* pink sangat pucat */
+    }
+
+    #dataTable tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    .badge.badge-info {
+    background-color: #F7C6D1 !important; /* pink muda lembut */
+    color: #5A2A3A !important; /* coklat gelap */
+    font-weight: 600;
+    border-radius: 0.25rem; /* radius badge, bisa disesuaikan */
+}
+
+</style>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
 
@@ -99,3 +147,9 @@
     <!-- End of Content Wrapper -->
 
 </div>
+
+<script>
+  $(document).ready(function() {
+    $('#dataTable').DataTable();
+  });
+</script>

@@ -1,4 +1,39 @@
-        <!-- Content Wrapper -->
+<style>
+    /* Style header tabel */
+    #dataTable thead tr {
+        background-color: #F7C6D1; 
+        color: #5A2A3A; /* coklat gelap */
+        font-weight: 700;
+        border-bottom: 3px solid #EA84B4; 
+    }
+
+    /* Style teks header */
+    #dataTable thead th {
+        padding: 12px 15px;
+        text-align: left;
+        letter-spacing: 0.05em;
+    }
+
+    /* Border kanan di th */
+    #dataTable thead th {
+        border-right: 1px solid #d6a7b8;
+    }
+
+    /* Hilangkan border kanan di th terakhir */
+    #dataTable thead th:last-child {
+        border-right: none;
+    }
+
+    /* Baris zebra */
+    #dataTable tbody tr:nth-child(even) {
+        background-color: #fff0f5; /* pink sangat pucat */
+    }
+
+    #dataTable tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+</style>
+<!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->

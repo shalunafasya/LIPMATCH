@@ -32,7 +32,7 @@
   }
   .login-image {
     flex: 1;
-    background: #fafafa;
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;

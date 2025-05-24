@@ -20,159 +20,86 @@
     <!-- Custom styles for this template-->
     <link href="<?= base_url() ?>assets/template/css/sb-admin-2.min.css" rel="stylesheet">
     <style type="text/css">
-         body {
-    background: linear-gradient(135deg, #fbd8dc 0%, #ffffff 100%);
-    font-family: 'Poppins', sans-serif;
-    color: #7a3f62;
-    min-height: 100vh;
-    margin: 0;
-    padding: 40px 20px;
-  }
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-  h1.page-title {
-    font-weight: 700;
-    font-size: 1.8rem;
-    letter-spacing: 0.05em;
-    color: #b95a8a;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    text-shadow: 1px 1px 2px rgba(234, 132, 180, 0.35);
-  }
+        body {
+            background-color: #FBD8DC !important;
+            background-image: none !important; 
+            color: #4a2c36; 
+            font-family: 'Nunito', sans-serif;
+        }
 
-  p.intro-text {
-    color: #b46590;
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 40px;
-    letter-spacing: 0.02em;
-    line-height: 1.5;
-  }
+        .card.shadow.mb-7 {
+            background-color: #fafafa;
+            border-radius: 15px;
+            border: 1px solid #fafafa;
+            box-shadow: 0 8px 25px rgb(255 182 193 / 0.3);
+            padding: 25px 30px;
+            margin-bottom: 40px;
+        }
 
-  .card {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 40px 45px;
-    box-shadow:
-      0 4px 8px rgba(234, 132, 180, 0.15),
-      0 10px 20px rgba(234, 132, 180, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .card:hover {
-    transform: translateY(-8px);
-    box-shadow:
-      0 10px 20px rgba(234, 132, 180, 0.25),
-      0 20px 40px rgba(234, 132, 180, 0.2);
-  }
+        h6.text-gray-800 {
+            color: #a33c52 !important; 
+            font-weight: 600;
+        }
 
-  .form-group {
-    margin-bottom: 30px;
-  }
+        .btn-info {
+            background-color: #EA84B4 !important;
+            border-color:rgb(234, 154, 191) !important;
+            transition: background-color 0.3s ease;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
 
-  .form-group label {
-    display: block;
-    font-weight: 600;
-    font-size: 16px;
-    color: #a85c86;
-    margin-bottom: 15px;
-    cursor: pointer;
-  }
+        .btn-info:hover, .btn-info:focus {
+            background-color:rgb(245, 127, 182) !important;
+            border-color:rgb(243, 114, 175) !important;
+            box-shadow: 0 0 8px #EA84B4;
+        }
 
-  .custom-control {
-    position: relative;
-    padding-left: 28px;
-    margin-right: 25px;
-    cursor: pointer;
-    user-select: none;
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 15px;
-  }
+        .form-group label {
+            font-weight: 600;
+            color: #EA84B4
+            font-size: 14.5px;
+        }
 
-  .custom-control-input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
+        .form-check-label {
+            color:rgb(237, 85, 156);
+            font-weight: 500;
+            font-size: 13.8px;
+            padding-left: 6px;
+        }
 
-  .custom-control-label {
-    font-weight: 500;
-    font-size: 14px;
-    color: #925378;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
+        .custom-control-input:checked~.form-check-label {
+            color: #EA84B4 !important;
+            font-weight: 600;
+        }
 
-  .custom-control-input:checked + .custom-control-label {
-    color: #ea84b4 !important;
-    font-weight: 700;
-    text-shadow: 0 0 3px #ea84b4;
-  }
+        .container-fluid {
+            padding-left: 30px !important;
+            padding-right: 30px !important;
+        }
 
-  .custom-control-input + .custom-control-label:hover {
-    color: #d46a9c;
-  }
+        .navbar {
+            background-color: #fafafa!important;
+            border-bottom: 2px solidrgb(255, 255, 255);
+        }
 
-  .custom-control-label::before {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    border: 2px solid #ea84b4;
-    border-radius: 50%;
-    background: white;
-    transition: border-color 0.3s ease;
-  }
+        h1.h6.text-gray-700 {
+            color:rgb(226, 76, 146) !important;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
 
-  .custom-control-input:checked + .custom-control-label::before {
-    background: #ea84b4;
-    border-color: #ea84b4;
-    box-shadow: 0 0 6px rgba(234, 132, 180, 0.6);
-  }
+        @media (max-width: 768px) {
+            .card.shadow.mb-7 {
+                padding: 20px 15px;
+            }
+            .btn-info {
+                width: 100%;
+            }
+        }
 
-  .btn-info {
-    background: linear-gradient(135deg, #ea84b4, #fbd8dc);
-    border: none;
-    border-radius: 30px;
-    padding: 14px 32px;
-    font-weight: 700;
-    font-size: 18px;
-    color: white;
-    box-shadow: 0 4px 12px rgba(234, 132, 180, 0.6);
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-    cursor: pointer;
-    margin-top: 30px;
-    width: 100%;
-  }
-
-  .btn-info:hover {
-    box-shadow: 0 6px 20px rgba(234, 132, 180, 0.9);
-    transform: translateY(-3px);
-  }
-
-  @media (max-width: 768px) {
-    .card {
-      padding: 25px 20px;
-    }
-    .btn-info {
-      font-size: 16px;
-      padding: 14px;
-    }
-    .custom-control {
-      margin-right: 15px;
-    }
-  }
-</style>
+    </style>
 </head>
 
 <body>
@@ -195,7 +122,7 @@
                 <!-- Page Heading -->
                 <div class="row ml-4">
                     <div class="d-sm-flex align-items-center justify-content-between ">
-                        <h1 class="h6 mb-10 text-gray-700 text-uppercase"> REKOMENDASI PRODUK LIPSTIK <?= isset($_SESSION['nama']) ? 'UNTUK ' . $_SESSION['nama'] : ''; ?> BERDASARKAN KONDISI BIBIR</h1>
+                        <h1 class="h6 mb-10 text-gray-700 text-uppercase">LIPMATCH</h1>
                     </div>
                 </div>
 

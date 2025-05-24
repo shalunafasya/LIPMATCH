@@ -22,6 +22,19 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
+    <style type="text/css">
+        .nav-item.active,
+        .nav-item.active > .nav-link {
+            background-color:rgb(242, 180, 209) !important;
+            color: white !important;
+        }
+
+        .nav-item.active > .nav-link:hover {
+            color: white !important;
+        }
+
+        
+    </style>
 
 </head>
 
@@ -31,6 +44,8 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
+         <?php $segment = service('uri')->getSegment(2); ?>
+
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -41,99 +56,47 @@
                 <div class="sidebar-brand-text mx-3">LIPMATCH</div>
             </a>
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/Produk') ?>">
-                    <i class="fas fa-fw fa-archive"></i>
-                    <span>Produk</span>
-                </a>
-                <!-- <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div> -->
-            </li>
+            <li class="nav-item <?= ($segment == 'Produk') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/Produk') ?>">
+            <i class="fas fa-fw fa-archive"></i>
+            <span>Produk</span>
+        </a>
+    </li>
 
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/Jenis_lipstik') ?>">
-                    <i class="fas fa-fw fa-dice-four"></i>
-                    <span>Jenis Lipstik</span>
-                </a>
-                <!-- <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div> -->
-            </li>
+    <li class="nav-item <?= ($segment == 'Jenis_lipstik') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/Jenis_lipstik') ?>">
+            <i class="fas fa-fw fa-dice-four"></i>
+            <span>Jenis Lipstik</span>
+        </a>
+    </li>
 
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/Jenis_bibir') ?>">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>Jenis Bibir</span>
-                </a>
-                <!-- <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div> -->
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/Tone_Kulit') ?>">
-                    <i class="fas fa-fw fa-swatchbook"></i>
-                    <span>Tone Kulit</span>
-                </a>
-                <!-- <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div> -->
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/Kriteria') ?>">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Kriteria</span>
-                </a>
-                <!-- <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div> -->
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/SUS') ?>">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pengujian SUS</span>
-                </a>
-            </li>
+    <li class="nav-item <?= ($segment == 'Jenis_bibir') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/Jenis_bibir') ?>">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Jenis Bibir</span>
+        </a>
+    </li>
+
+    <li class="nav-item <?= ($segment == 'Tone_Kulit') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/Tone_Kulit') ?>">
+            <i class="fas fa-fw fa-swatchbook"></i>
+            <span>Tone Kulit</span>
+        </a>
+    </li>
+
+    <li class="nav-item <?= ($segment == 'Kriteria') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/Kriteria') ?>">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Kriteria</span>
+        </a>
+    </li>
+
+    <li class="nav-item <?= ($segment == 'SUS') ? 'active' : '' ?>">
+        <a class="nav-link" href="<?= base_url('admin/SUS') ?>">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Pengujian SUS</span>
+        </a>
+    </li>
         </ul>
           
         <!-- End of Sidebar -->
