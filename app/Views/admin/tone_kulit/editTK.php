@@ -1,0 +1,37 @@
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                </nav>
+
+                <div class="container-fluid">
+                    <div class="card shadow mb-4">
+                        <div class="row">
+    <div class="col">
+    <form method="POST" action="<?= site_url('admin/Tone_Kulit/proses_editdata/' . $dataTK['id_tk']) ?>">
+    <div class="form-group">
+        <label for="tone_kulit">Tone Kulit</label>
+        <input type="text" name="tone_kulit" id="tone_kulit" class="form-control" value="<?= old('tone_kulit', $dataTK['tone_kulit']) ?>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+</form>
+    </div>
+</div>
+                    </div>
+                </div>
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; 2025 Luna. All rights reserved.</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+    </div>

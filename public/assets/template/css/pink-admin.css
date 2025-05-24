@@ -1,0 +1,27 @@
+/*! SB Admin 2 - Original Minified (placeholder) */
+
+.sidebar-dark {background-color:#ffaacb!important;}
+.sidebar-dark .nav-item .nav-link{color:#ffe4ec;}
+.sidebar-dark .nav-item.active .nav-link,
+.sidebar-dark .nav-item .nav-link:focus,
+.sidebar-dark .nav-item .nav-link:hover{background-color:#ff8eb7!important;color:#fff!important;}
+.topbar{background-color:#ffc1da!important;}
+body{background-color:#fff0f5!important;color:#4d2c3d;}
+.card,.alert,.modal-content{background-color:#fff0f5!important;color:#4d2c3d;}
+.btn-primary{background-color:#ff69b4!important;border-color:#ff69b4!important;}
+.btn-primary:hover{background-color:#ff4f9a!important;border-color:#ff4f9a!important;}
+.bg-primary,.bg-gradient-primary{background-color:#ff69b4!important;background-image:linear-gradient(180deg,#ff69b4 10%,#ff4f9a 100%)!important;color:#fff;}
+.text-primary{color:#ff69b4!important;}
+.border-left-primary,.border-bottom-primary{border-color:#ff69b4!important;}
+a{color:#ff69b4;}
+a:hover{color:#e04394;}
+.scroll-to-top{background:rgba(255,105,180,0.5);}
+.scroll-to-top:hover{background:#ff69b4;}
+hr.sidebar-divider{border-top:1px solid #ffd6e8;}
+.sidebar .sidebar-heading{color:#fff0f5;}
+.dropdown-list .dropdown-header{background-color:#ff69b4;color:#fff;}
+.badge-primary{background-color:#ff69b4;color:#fff;}
+.page-item.active .page-link{background-color:#ff69b4;border-color:#ff69b4;}
+.page-link{color:#ff69b4;}
+.page-link:hover{background-color:#ffe4ec;border-color:#ff69b4;}
+input.form-control,select.form-control{border:1px solid #ffaad4;border-radius:8px;}
