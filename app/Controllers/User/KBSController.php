@@ -37,13 +37,11 @@ class KBSController extends BaseController
 
     $normalize_jenis_bibir = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
 
-    // Ambil session
     $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
     $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
     $certainty = $session->get('SESS_KBS_LIPSTIK_CERTAINTY');
     $tone_kulit = (int) $session->get('sess_tone_bibir');
 
-    // Validasi sesi
     if (
         empty($kategori_finansial) || empty($jenis_bibir) ||
         empty($certainty) || empty($tone_kulit)
@@ -55,14 +53,12 @@ class KBSController extends BaseController
         return $this->response->setStatusCode(400)->setJSON(['error' => 'Jenis bibir tidak valid']);
     }
 
-    // Target user
     $target = [
         'kategori_finansial' => ((int) $kategori_finansial) - 1,
         'jenis_bibir' => $normalize_jenis_bibir[$jenis_bibir],
         'certainty' => (int)(((float) $certainty / 100) * 4)
     ];
 
-    // Ambil alternatif
     $alternative = $this->kbs_m->getAllAlternative($jenis_bibir, $tone_kulit);
 
     if (count($alternative) < 5) {
@@ -71,7 +67,6 @@ class KBSController extends BaseController
         return $this->response->setJSON($result);
     }
 
-    // Normalisasi alternatif
     $normalize_alternative = [];
     foreach ($alternative as $al) {
         if (!isset($normalize_jenis_bibir[$al['jenis_bibir']])) continue;
@@ -84,7 +79,6 @@ class KBSController extends BaseController
         ];
     }
 
-    // Hitung GAP dan konversi
     $GAP = [];
     foreach ($normalize_alternative as $na) {
         $GAP[] = [
@@ -102,7 +96,7 @@ class KBSController extends BaseController
             !isset($GAP_mapping[$gap['jenis_bibir']]) ||
             !isset($GAP_mapping[$gap['certainty']])
         ) {
-            continue; // lewati jika ada GAP yang tidak terdaftar
+            continue;
         }
 
         $konversi[] = [
@@ -113,7 +107,6 @@ class KBSController extends BaseController
         ];
     }
 
-    // Hitung faktor
     $faktor = [];
     foreach ($konversi as $konv) {
         $core_faktor = ($konv['kategori_finansial'] + $konv['certainty']) / 2.0;
@@ -126,7 +119,6 @@ class KBSController extends BaseController
         ];
     }
 
-    // Hitung NT
     $final_NT = [];
     foreach ($faktor as $f) {
         $final_NT[] = [
@@ -166,14 +158,16 @@ class KBSController extends BaseController
             $top_products = [];
 
             $range = [
-                2 => [50000, 100000],
-                3 => [100000, 200000],
-                4 => [200001, 500000]
+                1 => [0, 50000],
+                2 => [50001, 100000],
+                3 => [100001, 200000],
+                4 => [200001, PHP_INT_MAX], // biar benar-benar ke atas tanpa batas
             ];
+
 
             [$low, $high] = $range[$kategori_finansial];
             foreach ($temp_products as $tp) {
-                if ($tp['harga'] >= $low && $tp['harga'] < $high) {
+                if ($tp['harga'] >= $low && $tp['harga'] <= $high) {
                     $top_products[] = $tp;
                 } else {
                     $ordinary_products[] = $tp;

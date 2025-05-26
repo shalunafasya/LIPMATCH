@@ -68,14 +68,15 @@ class Kriteria_model extends Model
 
 
     public function all_produk()
-    {
-        return $this->db->table('produk')
-                        ->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik,tone_kulit.tone_kulit as tone_kulit, produk.merk_produk as merk_produk, produk.nama_produk as nama_produk, produk.harga, produk.rekomendasi')
-                        ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
-                        ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
-                        ->join('tone_kulit', 'produk.id_tk = tone_kulit.id_tk')
-                        ->orderBy('produk.rekomendasi', 'DESC')
-                        ->get()
-                        ->getResult();
-    }
+{
+    return $this->db->table('produk')
+                    ->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, tone_kulit.tone_kulit as tone_kulit, produk.merk_produk as merk_produk, produk.nama_produk as nama_produk, produk.harga, produk.rekomendasi, produk.gambar')
+                    ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
+                    ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
+                    ->join('tone_kulit', 'produk.id_tk = tone_kulit.id_tk')
+                    ->orderBy('produk.rekomendasi', 'DESC')
+                    ->get()
+                    ->getResult();
+}
+
 }

@@ -132,23 +132,36 @@ class Jenis_Bibir extends BaseController
             $list_produk = $this->Kriteria_model->produk_by_jb_and_tone($id_JB, $tone_kulit);
         }
 
-        $kategori_finansial = session()->get('sess_lipstik_uang');
+        $kategori_finansial = session()->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
+ 
+        $range = [
+            1 => [0, 50000],
+            2 => [50001, 100000],
+            3 => [100001, 200000],
+            4 => [200001, PHP_INT_MAX]
+        ];
+
+        if (isset($range[$kategori_finansial])) {
+            [$low, $high] = $range[$kategori_finansial];
+            $list_produk = array_filter($list_produk, function($produk) use ($low, $high) {
+                return $produk->harga >= $low && $produk->harga <= $high;
+            });
+        }
 
         session()->set('SESS_KBS_LIPSTIK_CERTAINTY', max($nilai));
         session()->set('SESS_KBS_LIPSTIK_JENIS_BIBIR', $id_JB);
         session()->set('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL', $kategori_finansial);
 
         $dataKondisiBibir = [
-            'id_jawaban'    => $lastInsertId, // bisa ambil dari insert jawabanBayes_model
+            'id_jawaban'    => $lastInsertId, 
             'normal'        => $p_normal,
             'kering'        => $p_kering,
-            'gelap'         => $p_gelap,  // asumsi p_gelap diubah jadi berminyak
+            'gelap'         => $p_gelap,  
             'kombinasi'     => $p_kombinasi,
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
         ];
 
-// Lalu insert ke tabel Kondisi_Kulit
 $this->KondisiBibir_model->insert($dataKondisiBibir);
 
         $data = [

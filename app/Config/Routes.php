@@ -16,6 +16,7 @@ $routes->get('jenisbibir', 'Jenis_Bibir::index');
 $routes->get('user/awal', 'User\Awal::index');
 $routes->post('User/Awal/simpan_nama', 'User\Awal::simpan_nama');
 $routes->get('user/jenis_bibir', 'User\Jenis_Bibir::index');
+$routes->post('user/jenis_bibir', 'User\Jenis_Bibir::index');
 $routes->post('User/Jenis_Bibir/proses_perhitungan', 'User\Jenis_Bibir::proses_perhitungan');
 $routes->get('User/Jenis_Bibir/rekomendasi/(:any)', 'User\Jenis_Bibir::rekomendasi/$1');
 $routes->post('User/Jenis_Bibir/rekomendasi', 'User\Jenis_Bibir::rekomendasi');

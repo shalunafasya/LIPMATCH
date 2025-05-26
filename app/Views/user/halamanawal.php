@@ -48,9 +48,9 @@
                     <select class="form-control" name="kategori_uang">
                         <option value="">-= Perkiraan Harga yang Anda Inginkan =-</option>
                         <option value="1">&le; Rp 50.000</option>
-                        <option value="2">&le; Rp 100.000</option>
-                        <option value="3">Rp 100.000 - Rp 200.000</option>
-                        <option value="4">Rp 200.001 keatas</option>
+                        <option value="2">Rp 50.001 - Rp 100.000</option>
+                        <option value="3">Rp 100.001 - Rp 200.000</option>
+                        <option value="4">&ge; Rp 200.001</option>
                     </select>
                     <select class="form-control" name="cek_tone">
                         <option value="0" disabled selected hidden>-= Tone Kulit Anda =-</option>

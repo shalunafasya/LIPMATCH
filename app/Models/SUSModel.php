@@ -29,14 +29,14 @@ class SUSModel extends Model
 
             foreach ($skors as $skor) {
                 if ($skor['id_soal'] % 2 == 0) {
-                    $totalSkor += (int)$skor['jawaban'] - 5;
+                    $totalSkor += 5 - (int)$skor['jawaban'];
                 } else {
                     $totalSkor += (int)$skor['jawaban'] - 1;
                 }
             }
         }
 
-        return count($feedbacks) > 0 ? (float) $totalSkor / count($feedbacks) : 0;
+        return count($feedbacks) > 0 ? (float) ($totalSkor * 2.5) / count($feedbacks) : 0;
     }
 
     public function getSoalJawaban()
