@@ -19,17 +19,16 @@ $routes->get('user/jenis_bibir', 'User\Jenis_Bibir::index');
 $routes->post('user/jenis_bibir', 'User\Jenis_Bibir::index');
 $routes->post('User/Jenis_Bibir/proses_perhitungan', 'User\Jenis_Bibir::proses_perhitungan');
 $routes->get('User/Jenis_Bibir/rekomendasi/(:any)', 'User\Jenis_Bibir::rekomendasi/$1');
+$routes->get('User/Jenis_Bibir/rekomendasi', 'User\Jenis_Bibir::rekomendasi');
 $routes->post('User/Jenis_Bibir/rekomendasi', 'User\Jenis_Bibir::rekomendasi');
-$routes->get('User/KBSController/profile_matching', 'User\KBSController::profile_matching');
 
 $routes->get('user/rekomendasi', 'User\Rekomendasi::index'); 
-$routes->post('User/KBSController/submit_feedback', 'User\KBSController::submit_feedback');  
 
+$routes->get('User/KBSController/profile_matching', 'User\KBSController::profile_matching');
+$routes->post('User/KBSController/submit_sus_feedback', 'User\KBSController::submit_sus_feedback');  
+$routes->post('User/KBSController/submit_csat_feedback', 'User\KBSController::submit_csat_feedback'); 
 $routes->get('User/KBSController/product_button/(:any)/(:num)', 'User\KBSController::product_button/$1/$2');
 $routes->get('User/KBSController/save_my_recommendation/(:segment)', 'User\KBSController::save_my_recommendation/$1');
-
-
-
 
 // Group admin routes
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
@@ -46,7 +45,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
     $routes->post('Produk/proses_tambah_data', 'Produk::proses_tambah_data');
     $routes->get('Produk/hapusdata/(:num)', 'produk::hapusdata/$1');
 
-    // Jenis Skincare
+    // Jenis Lipstik
     $routes->get('Jenis_lipstik', 'Jenis_lipstik::index');
     $routes->get('jenis_lipstik', 'Jenis_lipstik::index');
     $routes->get('Jenis_lipstik/tambah', 'Jenis_lipstik::tambah_dataJL');

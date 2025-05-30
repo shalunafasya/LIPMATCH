@@ -11,6 +11,22 @@
     .rating {
         cursor: pointer;
     }
+
+    .emoji {
+        font-size: 40px;
+        margin: 5px;
+        cursor: pointer;
+        filter: grayscale(100%);
+        transition: transform 0.2s, filter 0.2s;
+    }
+    .emoji:hover {
+        transform: scale(1.2);
+    }
+    .emoji.selected {
+        filter: grayscale(0%);
+    }
+
+
 </style>
 
 <!-- Sidebar Toggler (Sidebar) -->
@@ -200,7 +216,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="<?= base_url('User/KBSController/submit_feedback') ?>" method="post">
+      <form action="<?= base_url('User/KBSController/submit_sus_feedback') ?>" method="post">
           <div class="modal-body text-center">
             <?php $number = 1; ?>
             <?php foreach($question as $quest): ?>
@@ -211,10 +227,6 @@
                         <?php for($i = 1; $i <= 5; $i++): ?>
                             <span class="fa fa-star rate-<?= $quest['id'] ?> rating" onclick="giveRate(this, <?= $quest['id'] ?>, <?= $i ?>, <?= $number ?>)"></span>
                         <?php endfor; ?>
-                        <!-- <span class="fa fa-star rate-1 rating checked"></span>
-                        <span class="fa fa-star rate-1 rating checked"></span>
-                        <span class="fa fa-star rate-1 rating"></span>
-                        <span class="fa fa-star rate-1 rating"></span> -->
                     </div>
                     <br>
                     <?php $number++ ?>
@@ -229,6 +241,38 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="csatModal" tabindex="-1" aria-labelledby="csatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="csatModalLabel">Feedback Kepuasan Anda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="<?= base_url('User/KBSController/submit_csat_feedback') ?>" method="post">
+        <div class="modal-body text-center">
+            <p>Bagaimanakah tingkat kepuasan Anda terhadap hasil rekomendasi yang didapatkan dari website LIPMATCH?</p>
+            <input type="hidden" name="csat_1" id="csat-1">
+            <div class="emoji-options">
+                <span class="emoji" onclick="setCSATEmoji(this, 1)">😡</span>
+                <span class="emoji" onclick="setCSATEmoji(this, 2)">😕</span>
+                <span class="emoji" onclick="setCSATEmoji(this, 3)">😐</span>
+                <span class="emoji" onclick="setCSATEmoji(this, 4)">🙂</span>
+                <span class="emoji" onclick="setCSATEmoji(this, 5)">🤩</span>
+                <input type="hidden" name="csat_1" id="csat-1">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Kirimkan Feedback</button>
+        </div>
+    </form>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- Footer -->
 <footer class="sticky-footer bg-white">
@@ -255,9 +299,18 @@
 <script src="<?=base_url()?>assets/template/js/demo/chart-area-demo.js"></script>
 <script src="<?=base_url()?>assets/template/js/demo/chart-pie-demo.js"></script>
 
+
+<?php $has_submit = session()->get('has_submit') ?? 'false'; ?>
+
 <script type="text/javascript">
     let wasRate = false;
     let pause = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        <?php if (session()->getFlashdata('show_csat')): ?>
+            $('#csatModal').modal('show');
+        <?php endif; ?>
+    });
 
     let answer = {};
 
@@ -280,11 +333,6 @@
         const result = await getProfileMatchingRecommendation().then(res => res);
 
         let temp = ``;
-
-        // <th>Nama Produk</th>
-        //         <th>Harga</th>
-        //         <th>Merk</th>
-        //         <th>Jenis Produk</th>
 
         if(result.profile_matching != null) {
             console.table(result.profile_matching);
@@ -413,6 +461,24 @@
         wasRate = true;
     }
 
+    const setCSATRating = (rating) => {
+        document.getElementById('csat-1').value = rating;
+        const stars = document.querySelectorAll('#csatModal .fa-star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('checked');
+            } else {
+                star.classList.remove('checked');
+            }
+        });
+    };
+
+    function setCSATEmoji(element, value) {
+        document.querySelectorAll('.emoji').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('csat-1').value = value;
+}
+
     const showRateModal = async () => {
         pause = true;
 
@@ -423,22 +489,30 @@
         $("#feedbackModal").modal();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if('<?= $has_submit ?>' == 'false' || '<?= $has_submit ?>' == "") {
-            console.info("Jalan harusnya");
-            setInterval(() => {
-                if(!pause) {
-                    // if(wasRate) {
-                    //     clearInterval();
-                    // } else {
-                    //     showRateModal();
-                    // }
-                    (wasRate) ? clearInterval() : showRateModal();
-                }
-            }, 31000);
-        }
+document.addEventListener('DOMContentLoaded', () => {
+    var has_submit = '<?= $has_submit ?>';
+    console.log("DEBUG has_submit:", has_submit);
 
+    if (has_submit === 'false' || has_submit === '0' || has_submit === '') {
+        console.info("Belum submit, timer 30 detik jalan...");
+        triggerModalWithDelay();
+    }
+
+    // kalau modal SUS ditutup pakai tombol X
+    document.querySelector('#feedbackModal .close')?.addEventListener('click', () => {
+        console.log("Modal SUS ditutup, tunggu 30 detik lagi...");
+        triggerModalWithDelay();
     });
+});
+
+function triggerModalWithDelay() {
+    setTimeout(() => {
+        if (!wasRate) {
+            showRateModal();
+        }
+    }, 30000); // tunggu 30 detik
+}
+
 </script>
 </body>
 </html>

@@ -37,6 +37,8 @@ class Jenis_Bibir extends BaseController
 
     public function proses_perhitungan()
     {
+        session()->set('has_submit', false);
+
         $ket_bobot = [];
         for ($i = 1; $i <= 14; $i++) {
             $ket_bobot[$i] = $this->request->getPost("nilai_bobot$i");
@@ -169,14 +171,16 @@ $this->KondisiBibir_model->insert($dataKondisiBibir);
             'p_kering' => $p_kering,
             'p_gelap' => $p_gelap,
             'p_kombinasi' => $p_kombinasi,
-            'list_js' => $this->JL_model->tampildata()
+            'list_js' => $this->JL_model->tampildata(),
+            'show_sus' => true
         ];
 
         session()->set('SESS_KBS_LIPSTIK_RESULT', $data);
         $data['list_produk'] = $list_produk;
         $data['filters'] = $this->kbs_m->getAllFilter();
         $data['question'] = $this->kbs_m->getSusQuestion();
-        $data['has_submit'] = false;
+        $data['has_submit'] = (session()->get('has_submit')) ? '1' : '0';
+
 
         return view('user/sidebar_user') . view('user/hasil', $data);
     }

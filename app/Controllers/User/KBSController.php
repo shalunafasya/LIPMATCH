@@ -161,7 +161,7 @@ class KBSController extends BaseController
                 1 => [0, 50000],
                 2 => [50001, 100000],
                 3 => [100001, 200000],
-                4 => [200001, PHP_INT_MAX], // biar benar-benar ke atas tanpa batas
+                4 => [200001, PHP_INT_MAX],
             ];
 
 
@@ -230,7 +230,7 @@ class KBSController extends BaseController
         return $this->response->setJSON(['status' => 'berhasil']);
     }
 
-    public function submit_feedback()
+    public function submit_sus_feedback()
     {
         helper('text');
         $data = $this->request->getPost();
@@ -248,7 +248,29 @@ class KBSController extends BaseController
                 return $this->response->setJSON(['status' => 'gagal']);
             }
         }
+        session()->set('has_submit', true);
+        return redirect()->to('User/Jenis_Bibir/rekomendasi')->with('show_csat', true);
 
-        return redirect()->to('User/Jenis_Bibir/rekomendasi/true');
     }
+
+    public function submit_csat_feedback()
+{
+    $userId = session()->get('user_id') ?? 0;
+    $rating = $this->request->getPost('csat_1');
+
+    if ($rating) {
+        $data = [
+            'user_id'      => $userId,
+            'question_id'  => 1,
+            'rating'       => $rating,
+            'created_at'   => date('Y-m-d H:i:s'),
+            'updated_at'   => date('Y-m-d H:i:s')
+        ];
+
+        $this->kbs_m->saveCsatFeedback($data);
+    }
+    return redirect()->to('User/Jenis_Bibir/rekomendasi')->with('message', 'CSAT Feedback berhasil disimpan!');
+}
+
+
 }

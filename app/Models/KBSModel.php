@@ -149,4 +149,10 @@ class KBSModel extends Model
     {
         return $this->db->table('sus_feedback')->insert($data);
     }
+
+    public function saveCsatFeedback($data)
+    {
+        return $this->db->table('csat_feedback')->insert($data);
+    }
+
 }
