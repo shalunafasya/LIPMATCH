@@ -95,6 +95,9 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
 
     // SUS
     $routes->get('SUS', 'SUS::index');
+    $routes->post('reset-sus', 'SUS::reset');
+    $routes->get('CSAT', 'CSAT::index');
+    $routes->post('reset-csat', 'CSAT::reset');
 });
 
 

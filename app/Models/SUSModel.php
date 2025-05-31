@@ -57,4 +57,9 @@ class SUSModel extends Model
 
         return $this->db->query($query)->getResultArray();
     }
+
+    public function resetSUS()
+    {
+        return $this->db->table('sus_feedback')->truncate();
+    }
 }

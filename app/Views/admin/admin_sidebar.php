@@ -33,9 +33,30 @@
             color: white !important;
         }
 
-        
-    </style>
+        .collapse-inner .collapse-item {
+            color: white !important;
+            border-radius: 0 !important;
+            width: 100% !important;        /* pastikan penuh */
+        }
 
+        .collapse-inner .collapse-item.active {
+            background-color: rgb(242, 180, 209) !important;
+            color: white !important;
+            border-radius: 0 !important;
+        }     
+        
+        .collapse-inner .collapse-item:hover {
+            background-color: transparent !important;  
+            color: white !important;      
+            border-radius: 0 !important;            
+        }
+
+        .collapse-inner .collapse-item.active:hover {
+            background-color: rgb(242, 180, 209) !important; 
+            color: white !important;
+            border-radius: 0 !important;
+        }   
+    </style>
 </head>
 
 <body id="page-top">
@@ -91,12 +112,21 @@
         </a>
     </li>
 
-    <li class="nav-item <?= ($segment == 'SUS') ? 'active' : '' ?>">
-        <a class="nav-link" href="<?= base_url('admin/SUS') ?>">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Pengujian SUS</span>
-        </a>
-    </li>
+    <li class="nav-item <?= ($segment == 'SUS' || $segment == 'CSAT')?>">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePengujian" aria-expanded="true" aria-controls="collapsePengujian">
+        <i class="fas fa-fw fa-folder"></i>
+        <span>Pengujian</span>
+    </a>
+    <div id="collapsePengujian" class="collapse <?= ($segment == 'SUS' || $segment == 'CSAT') ? 'show' : '' ?>" aria-labelledby="headingPengujian" data-parent="#accordionSidebar">
+        <div class="collapse-inner">
+            <a class="collapse-item <?= ($segment == 'SUS') ? 'active' : '' ?>" href="<?= base_url('admin/SUS') ?>">Pengujian SUS</a>
+            <a class="collapse-item <?= ($segment == 'CSAT') ? 'active' : '' ?>" href="<?= base_url('admin/CSAT') ?>">Pengujian CSAT</a>
+        </div>
+    </div>
+</li>
+
+
+
         </ul>
           
         <!-- End of Sidebar -->

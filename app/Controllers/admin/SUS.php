@@ -25,4 +25,11 @@ class SUS extends BaseController
             . view('admin/sus/index', $data)
             . view('admin/admin_footer');
     }
+
+    public function reset()
+    {
+        $this->m_sus->resetSUS();
+        return redirect()->to('/admin/SUS')->with('message', 'Semua data SUS berhasil direset!');
+    }
+
 }
