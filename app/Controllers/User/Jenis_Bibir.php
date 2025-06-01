@@ -40,12 +40,12 @@ class Jenis_Bibir extends BaseController
         session()->set('has_submit', false);
 
         $ket_bobot = [];
-        for ($i = 1; $i <= 14; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $ket_bobot[$i] = $this->request->getPost("nilai_bobot$i");
         }
 
         $bobot = [];
-        for ($i = 1; $i <= 14; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $bobot[$i] = $this->Kriteria_model->cek_bobot($ket_bobot[$i]);
         }
 
@@ -63,16 +63,16 @@ class Jenis_Bibir extends BaseController
 
         $BT_normal = array_sum([
             $bobot[1][0]->bobot, $bobot[2][0]->bobot, $bobot[3][0]->bobot,
-            $bobot[4][0]->bobot, $bobot[9][0]->bobot
+            $bobot[4][0]->bobot, $bobot[5][0]->bobot
         ]);
         $BT_kering = array_sum([
-            $bobot[5][0]->bobot, $bobot[6][0]->bobot, $bobot[7][0]->bobot, $bobot[14][0]->bobot
+            $bobot[6][0]->bobot, $bobot[7][0]->bobot, $bobot[8][0]->bobot, $bobot[9][0]->bobot, $bobot[5][0]->bobot
         ]);
         $BT_gelap = array_sum([
-            $bobot[8][0]->bobot, $bobot[9][0]->bobot, $bobot[10][0]->bobot, $bobot[11][0]->bobot
+            $bobot[10][0]->bobot, $bobot[11][0]->bobot, $bobot[12][0]->bobot, $bobot[4][0]->bobot
         ]);
         $BT_kombinasi = array_sum([
-            $bobot[12][0]->bobot, $bobot[13][0]->bobot, $bobot[14][0]->bobot, $bobot[5][0]->bobot
+            $bobot[13][0]->bobot, $bobot[14][0]->bobot, $bobot[15][0]->bobot
         ]);
 
         $probabilitas = [];
@@ -82,16 +82,16 @@ class Jenis_Bibir extends BaseController
                 $probabilitas[$key] = 0;
             } else {
                 switch ($key) {
-                    case 1: case 2: case 3: case 4: case 9:
+                    case 1: case 2: case 3: case 4: case 5:
                         $probabilitas[$key] = $bobotValue / $BT_normal;
                         break;
-                    case 5: case 6: case 7: case 14:
+                    case 6: case 7: case 8: case 9: case 5:
                         $probabilitas[$key] = $bobotValue / $BT_kering;
                         break;
-                    case 8: case 9: case 10: case 11:
+                    case 10: case 11: case 12: case 4:
                         $probabilitas[$key] = $bobotValue / $BT_gelap;
                         break;
-                    case 12: case 13: case 14: case 5:
+                    case 13: case 14: case 15:
                         $probabilitas[$key] = $bobotValue / $BT_kombinasi;
                         break;
                 }
@@ -103,10 +103,10 @@ class Jenis_Bibir extends BaseController
             $NA_bobot[$key] = ($bobot[$key][0]->bobot / 2) * $value;
         }
 
-        $AT_normal = array_sum([$NA_bobot[1], $NA_bobot[2], $NA_bobot[3], $NA_bobot[4], $NA_bobot[9]]);
-        $AT_kering = array_sum([$NA_bobot[5], $NA_bobot[6], $NA_bobot[7], $NA_bobot[14]]);
-        $AT_gelap = array_sum([$NA_bobot[8], $NA_bobot[9], $NA_bobot[10], $NA_bobot[11]]);
-        $AT_kombinasi = array_sum([$NA_bobot[12], $NA_bobot[13], $NA_bobot[14], $NA_bobot[5]]);
+        $AT_normal = array_sum([$NA_bobot[1], $NA_bobot[2], $NA_bobot[3], $NA_bobot[4], $NA_bobot[5]]);
+        $AT_kering = array_sum([$NA_bobot[6], $NA_bobot[7], $NA_bobot[8], $NA_bobot[9], $NA_bobot[5]]);
+        $AT_gelap = array_sum([$NA_bobot[10], $NA_bobot[11], $NA_bobot[12], $NA_bobot[4]]);
+        $AT_kombinasi = array_sum([$NA_bobot[13], $NA_bobot[14], $NA_bobot[15]]);
 
         $p_normal = $AT_normal * 100;
         $p_kering = $AT_kering * 100;
