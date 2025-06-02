@@ -40,7 +40,10 @@ class KBSModel extends Model
         }
 
         if (!is_null($tone_kulit)) {
-            $builder->where('tone_kulit', $tone_kulit);
+            $builder->groupStart()
+                ->where('tone_kulit', $tone_kulit)
+                ->orWhere('tone_kulit', 0)
+                ->groupEnd();
         }
 
         return $builder->get()->getResultArray();
@@ -48,45 +51,27 @@ class KBSModel extends Model
 
     public function getRecommendationProduct($id_rekomendasi)
     {
+        // hanya ambil produk yang sudah pernah direkomendasikan (favorit)
         $builder = $this->db->table('rekomendasi_produk');
-        $rekomendasi_produk = $builder->where('id_rekomendasi', $id_rekomendasi)->get()->getResultArray();
-
-        $id_JB = session()->get('SESS_KBS_SKINCARE_JENIS_KULIT');
-
-        $builder = $this->db->table('produk');
-        $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi')
+        $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
+            ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
             ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
             ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
-            ->where('produk.id_JB', $id_JB)
+            ->where('rekomendasi_produk.id_rekomendasi', $id_rekomendasi)
             ->orderBy('produk.rekomendasi', 'DESC');
 
-        $temp_produk = $builder->get()->getResultArray();
-        $data_produk = [];
+        return $builder->get()->getResultArray();
+    }
 
-        foreach ($rekomendasi_produk as $rekomen) {
-            foreach ($temp_produk as $tp) {
-                if ($rekomen['id_produk'] == $tp['id_produk']) {
-                    $data_produk[] = $tp;
-                    break;
-                }
-            }
-        }
+    public function getAllFavoritedProductIds()
+    {
+        return $this->db->table('rekomendasi_produk')
+    ->select('id_produk')
+    ->groupBy('id_produk')
+    ->having('COUNT(*) >=', 5)
+    ->get()
+    ->getResultArray();
 
-        foreach ($temp_produk as $produk) {
-            $exist = false;
-            foreach ($data_produk as $dt) {
-                if ($dt['id_produk'] == $produk['id_produk']) {
-                    $exist = true;
-                    break;
-                }
-            }
-
-            if (!$exist) {
-                $data_produk[] = $produk;
-            }
-        }
-
-        return $data_produk;
     }
 
     public function saveRecommendation($data)
@@ -154,5 +139,31 @@ class KBSModel extends Model
     {
         return $this->db->table('csat_feedback')->insert($data);
     }
+
+    public function getRecommendationProductsByIds($product_ids)
+{
+    if (empty($product_ids)) {
+        return [];
+    }
+
+    $builder = $this->db->table('produk');
+    $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
+        ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
+        ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
+        ->whereIn('produk.id_produk', $product_ids)
+        ->orderBy('produk.rekomendasi', 'DESC');
+
+    return $builder->get()->getResultArray();
+}
+
+public function getProductIdsByRecommendationIds($recommendation_ids)
+{
+    return $this->db->table('rekomendasi_produk')
+        ->select('id_produk')
+        ->whereIn('id_rekomendasi', $recommendation_ids)
+        ->get()
+        ->getResultArray();
+}
+
 
 }

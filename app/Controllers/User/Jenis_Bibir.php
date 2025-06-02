@@ -153,6 +153,7 @@ class Jenis_Bibir extends BaseController
         session()->set('SESS_KBS_LIPSTIK_CERTAINTY', max($nilai));
         session()->set('SESS_KBS_LIPSTIK_JENIS_BIBIR', $id_JB);
         session()->set('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL', $kategori_finansial);
+        session()->set('SESS_KBS_LIPSTIK_TONE_KULIT', $tone_kulit);
 
         $dataKondisiBibir = [
             'id_jawaban'    => $lastInsertId, 
@@ -198,7 +199,7 @@ $this->KondisiBibir_model->insert($dataKondisiBibir);
 
         $data = session()->get('SESS_KBS_LIPSTIK_RESULT');
         $id_JB = session()->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
-        $tone_kulit = (int) session()->get('sess_tone_kulit');
+        $tone_kulit = (int) session()->get('SESS_KBS_LIPSTIK_TONE_KULIT');
 
 
         $list_produk = $this->Kriteria_model->produk_by_jb_and_filter_tone($id_JB, $filter_id, $tone_kulit);

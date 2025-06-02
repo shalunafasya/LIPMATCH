@@ -32,7 +32,6 @@ class Awal extends BaseController
         }
 
         session()->set('sess_lipstik_nama', $nama);
-        session()->set('sess_tone_kulit', $tone_kulit);
         session()->set('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL', $kategori_uang);
         session()->set('SESS_KBS_LIPSTIK_TONE_KULIT', $tone_kulit);
 
