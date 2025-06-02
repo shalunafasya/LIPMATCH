@@ -26,7 +26,8 @@
 
             <div class="row mb-3">
                 <div class="col-12 text-right">
-                    <form method="post" action="/admin/reset-csat" onsubmit="return confirm('Yakin ingin menghapus semua data CSAT?');">
+                    <form method="post" action="/admin/reset-csat"
+                        onsubmit="return confirm('Yakin ingin menghapus semua data CSAT?');">
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-trash-alt"></i> Reset Data CSAT
                         </button>
@@ -55,7 +56,7 @@
                                     </thead>
                                     <tbody>
                                         <?php $number = 1; ?>
-                                        <?php foreach($csat_feedback as $cf): ?>
+                                        <?php foreach ($csat_feedback as $cf): ?>
                                             <tr>
                                                 <td><?= $number++; ?></td>
                                                 <td><?= $cf['user_id'] ?></td>

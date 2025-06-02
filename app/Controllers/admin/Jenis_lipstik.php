@@ -11,7 +11,7 @@ class Jenis_lipstik extends BaseController
 
     public function __construct()
     {
-        $this->jlModel = new JL_model(); // Menggunakan CI4 model
+        $this->jlModel = new JL_model();
     }
 
     public function index()

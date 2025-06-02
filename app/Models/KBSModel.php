@@ -6,13 +6,21 @@ use CodeIgniter\Model;
 
 class KBSModel extends Model
 {
-    protected $table      = 'produk';
+    protected $table = 'produk';
     protected $primaryKey = 'id_produk';
 
     protected $allowedFields = [
-        'id_produk', 'jenis_lipstik', 'merk_produk', 'nama_produk',
-        'harga', 'rekomendasi', 'id_JB', 'id_tk', 'gambar',
-        'created_at', 'updated_at'
+        'id_produk',
+        'jenis_lipstik',
+        'merk_produk',
+        'nama_produk',
+        'harga',
+        'rekomendasi',
+        'id_JB',
+        'id_tk',
+        'gambar',
+        'created_at',
+        'updated_at'
     ];
 
     public function getProductsBySkin($id_JB, $sort = null)
@@ -51,7 +59,6 @@ class KBSModel extends Model
 
     public function getRecommendationProduct($id_rekomendasi)
     {
-        // hanya ambil produk yang sudah pernah direkomendasikan (favorit)
         $builder = $this->db->table('rekomendasi_produk');
         $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
             ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
@@ -66,11 +73,11 @@ class KBSModel extends Model
     public function getAllFavoritedProductIds()
     {
         return $this->db->table('rekomendasi_produk')
-    ->select('id_produk')
-    ->groupBy('id_produk')
-    ->having('COUNT(*) >=', 5)
-    ->get()
-    ->getResultArray();
+            ->select('id_produk')
+            ->groupBy('id_produk')
+            ->having('COUNT(*) >=', 5)
+            ->get()
+            ->getResultArray();
 
     }
 
@@ -141,29 +148,29 @@ class KBSModel extends Model
     }
 
     public function getRecommendationProductsByIds($product_ids)
-{
-    if (empty($product_ids)) {
-        return [];
+    {
+        if (empty($product_ids)) {
+            return [];
+        }
+
+        $builder = $this->db->table('produk');
+        $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
+            ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
+            ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
+            ->whereIn('produk.id_produk', $product_ids)
+            ->orderBy('produk.rekomendasi', 'DESC');
+
+        return $builder->get()->getResultArray();
     }
 
-    $builder = $this->db->table('produk');
-    $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
-        ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
-        ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
-        ->whereIn('produk.id_produk', $product_ids)
-        ->orderBy('produk.rekomendasi', 'DESC');
-
-    return $builder->get()->getResultArray();
-}
-
-public function getProductIdsByRecommendationIds($recommendation_ids)
-{
-    return $this->db->table('rekomendasi_produk')
-        ->select('id_produk')
-        ->whereIn('id_rekomendasi', $recommendation_ids)
-        ->get()
-        ->getResultArray();
-}
+    public function getProductIdsByRecommendationIds($recommendation_ids)
+    {
+        return $this->db->table('rekomendasi_produk')
+            ->select('id_produk')
+            ->whereIn('id_rekomendasi', $recommendation_ids)
+            ->get()
+            ->getResultArray();
+    }
 
 
 }

@@ -40,9 +40,9 @@ class Produk extends BaseController
     public function tambah_data()
     {
         $data = [
-            'List_JB' => $this->jbModel->findAll(),  
+            'List_JB' => $this->jbModel->findAll(),
             'List_JS' => $this->jlModel->findAll(),
-            'List_TK' => $this->tkModel->findAll()   
+            'List_TK' => $this->tkModel->findAll()
         ];
 
         return view('admin/admin_sidebar')
@@ -52,29 +52,31 @@ class Produk extends BaseController
 
     public function proses_tambah_data()
     {
-        if (!$this->validate([
-            'jenis_lipstik' => 'required',
-            'merk_produk'   => 'required',
-            'kondisi_bibir' => 'required',
-            'nama_produk'   => 'required',
-            'tone_kulit'    => 'required',
-            'image'         => 'uploaded[image]|max_size[image,2048]|is_image[image]|ext_in[image,jpg,jpeg,png,gif]' // Validasi file gambar
-        ])) {
+        if (
+            !$this->validate([
+                'jenis_lipstik' => 'required',
+                'merk_produk' => 'required',
+                'kondisi_bibir' => 'required',
+                'nama_produk' => 'required',
+                'tone_kulit' => 'required',
+                'image' => 'uploaded[image]|max_size[image,2048]|is_image[image]|ext_in[image,jpg,jpeg,png,gif]'
+            ])
+        ) {
             return redirect()->back()->withInput()->with('error', 'Gagal menambahkan data, periksa form input.');
         }
 
         $data = [
             'jenis_lipstik' => $this->request->getPost('jenis_lipstik'),
-            'merk_produk'   => $this->request->getPost('merek_produk'),
+            'merk_produk' => $this->request->getPost('merek_produk'),
             'id_JB' => implode(',', $this->request->getPost('kondisi_bibir')),
-            'nama_produk'    => $this->request->getPost('nama_produk'),
+            'nama_produk' => $this->request->getPost('nama_produk'),
             'id_tk' => implode(',', $this->request->getPost('tone_kulit')),
 
         ];
 
         $upload = $this->produkModel->upload();
         if ($upload['result'] === "success") {
-            $data['gambar'] = $upload['file']; 
+            $data['gambar'] = $upload['file'];
         }
 
         $this->produkModel->insert($data);
@@ -85,7 +87,7 @@ class Produk extends BaseController
     public function hapusdata($id = null)
     {
         if ($id) {
-            $this->produkModel->delete($id); 
+            $this->produkModel->delete($id);
         }
         return redirect()->to('/admin/produk');
     }
@@ -94,10 +96,10 @@ class Produk extends BaseController
     {
         if ($id_produk && $this->produkModel->find($id_produk)) {
             $data = [
-                'List_JB'     => $this->jbModel->findAll(),
-                'List_JS'     => $this->jlModel->findAll(),
-                'List_TK'     => $this->tkModel->findAll(),
-                'data_produk' => $this->produkModel->find($id_produk) 
+                'List_JB' => $this->jbModel->findAll(),
+                'List_JS' => $this->jlModel->findAll(),
+                'List_TK' => $this->tkModel->findAll(),
+                'data_produk' => $this->produkModel->find($id_produk)
             ];
 
             return view('admin/admin_sidebar')
@@ -110,26 +112,29 @@ class Produk extends BaseController
 
     public function proses_editdata($id_produk = null)
     {
-        if (!$id_produk) return redirect()->to('/admin/produk');
+        if (!$id_produk)
+            return redirect()->to('/admin/produk');
 
-        if (!$this->validate([
-            'jenis_lipstik' => 'required',
-            'merek_produk'   => 'required',
-            'kondisi_bibir'  => 'required',
-            'nama_produk'    => 'required',
-            'tone_kulit'    => 'required',
-            'image' => 'permit_empty|is_image[image]|max_size[image,2048]|ext_in[image,jpg,jpeg,png,gif]'
-        ])) {
+        if (
+            !$this->validate([
+                'jenis_lipstik' => 'required',
+                'merek_produk' => 'required',
+                'kondisi_bibir' => 'required',
+                'nama_produk' => 'required',
+                'tone_kulit' => 'required',
+                'image' => 'permit_empty|is_image[image]|max_size[image,2048]|ext_in[image,jpg,jpeg,png,gif]'
+            ])
+        ) {
             return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data, periksa form input.');
         }
 
         $data = [
             'jenis_lipstik' => $this->request->getPost('jenis_lipstik'),
-            'merk_produk'   => $this->request->getPost('merek_produk'),
+            'merk_produk' => $this->request->getPost('merek_produk'),
             'id_JB' => implode(',', $this->request->getPost('kondisi_bibir')),
-            'nama_produk'    => $this->request->getPost('nama_produk'),
+            'nama_produk' => $this->request->getPost('nama_produk'),
             'id_tk' => implode(',', $this->request->getPost('tone_kulit')),
-            'harga'          => $this->request->getPost('harga_produk'),
+            'harga' => $this->request->getPost('harga_produk'),
         ];
 
         $file = $this->request->getFile('image');
@@ -142,46 +147,44 @@ class Produk extends BaseController
             if (!empty($oldGambar)) {
                 $data['gambar'] = $oldGambar;
             } else {
-                unset($data['gambar']); 
+                unset($data['gambar']);
             }
-        }        
+        }
 
         $this->produkModel->update($id_produk, $data);
 
         return redirect()->to('/admin/produk');
     }
-    
+
     public function proses_tambah_data_v1()
-{
-    // dd($this->request->getPost('kondisi_bibir'));
+    {
 
-    $data = [];
-    
-    $gambar = $this->request->getFile('image');
-    
-    if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
-        $newFileName = uniqid() . '.' . $gambar->getExtension();
-        $gambar->move(ROOTPATH . 'public/assets/image/produk', $newFileName); 
+        $data = [];
 
-        $data = [
-            'jenis_lipstik' => $this->request->getPost('jenis_lipstik'),
-            'merk_produk' => $this->request->getPost('merek_produk'),
-            'id_JB' => implode(',', $this->request->getPost('kondisi_bibir')),
-            'nama_produk' => $this->request->getPost('nama_produk'),
-            'id_tk' => implode(',', $this->request->getPost('tone_kulit')),
-            'harga' => $this->request->getPost('harga_produk'),
-            'gambar' => $newFileName,  
-        ];
-        // dd($data);
+        $gambar = $this->request->getFile('image');
 
-        $this->produkModel->tambah_data($data);
+        if ($gambar && $gambar->isValid() && !$gambar->hasMoved()) {
+            $newFileName = uniqid() . '.' . $gambar->getExtension();
+            $gambar->move(ROOTPATH . 'public/assets/image/produk', $newFileName);
 
-        return redirect()->to('/admin/Produk');
-    } else {
-        $message = 'File upload gagal: ' . ($gambar ? $gambar->getErrorString() : 'No file uploaded');
-        session()->setFlashdata('message', $message);
-        return redirect()->to('/admin/Produk/tambah_data');
+            $data = [
+                'jenis_lipstik' => $this->request->getPost('jenis_lipstik'),
+                'merk_produk' => $this->request->getPost('merek_produk'),
+                'id_JB' => implode(',', $this->request->getPost('kondisi_bibir')),
+                'nama_produk' => $this->request->getPost('nama_produk'),
+                'id_tk' => implode(',', $this->request->getPost('tone_kulit')),
+                'harga' => $this->request->getPost('harga_produk'),
+                'gambar' => $newFileName,
+            ];
+
+            $this->produkModel->tambah_data($data);
+
+            return redirect()->to('/admin/Produk');
+        } else {
+            $message = 'File upload gagal: ' . ($gambar ? $gambar->getErrorString() : 'No file uploaded');
+            session()->setFlashdata('message', $message);
+            return redirect()->to('/admin/Produk/tambah_data');
+        }
     }
-}
 
 }

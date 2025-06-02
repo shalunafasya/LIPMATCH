@@ -50,29 +50,41 @@ class Jenis_Bibir extends BaseController
         }
 
         foreach ($ket_bobot as $no => $id_pertanyaan) {
-        $dataInsert = [
-            'id_pertanyaan' => $id_pertanyaan,
-            'nomor_soal'    => $no,
-            'jawaban'       => $bobot[$no][0]->bobot,
-            'created_at'    => date('Y-m-d H:i:s'),
-            'updated_At'    => date('Y-m-d H:i:s')
-        ];
-        $this->jawabanBayes_model->insert($dataInsert);
-        $lastInsertId = $this->jawabanBayes_model->getInsertID();
-    }
+            $dataInsert = [
+                'id_pertanyaan' => $id_pertanyaan,
+                'nomor_soal' => $no,
+                'jawaban' => $bobot[$no][0]->bobot,
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_At' => date('Y-m-d H:i:s')
+            ];
+            $this->jawabanBayes_model->insert($dataInsert);
+            $lastInsertId = $this->jawabanBayes_model->getInsertID();
+        }
 
         $BT_normal = array_sum([
-            $bobot[1][0]->bobot, $bobot[2][0]->bobot, $bobot[3][0]->bobot,
-            $bobot[4][0]->bobot, $bobot[5][0]->bobot
+            $bobot[1][0]->bobot,
+            $bobot[2][0]->bobot,
+            $bobot[3][0]->bobot,
+            $bobot[4][0]->bobot,
+            $bobot[5][0]->bobot
         ]);
         $BT_kering = array_sum([
-            $bobot[6][0]->bobot, $bobot[7][0]->bobot, $bobot[8][0]->bobot, $bobot[9][0]->bobot, $bobot[5][0]->bobot
+            $bobot[6][0]->bobot,
+            $bobot[7][0]->bobot,
+            $bobot[8][0]->bobot,
+            $bobot[9][0]->bobot,
+            $bobot[5][0]->bobot
         ]);
         $BT_gelap = array_sum([
-            $bobot[10][0]->bobot, $bobot[11][0]->bobot, $bobot[12][0]->bobot, $bobot[4][0]->bobot
+            $bobot[10][0]->bobot,
+            $bobot[11][0]->bobot,
+            $bobot[12][0]->bobot,
+            $bobot[4][0]->bobot
         ]);
         $BT_kombinasi = array_sum([
-            $bobot[13][0]->bobot, $bobot[14][0]->bobot, $bobot[15][0]->bobot
+            $bobot[13][0]->bobot,
+            $bobot[14][0]->bobot,
+            $bobot[15][0]->bobot
         ]);
 
         $probabilitas = [];
@@ -82,16 +94,29 @@ class Jenis_Bibir extends BaseController
                 $probabilitas[$key] = 0;
             } else {
                 switch ($key) {
-                    case 1: case 2: case 3: case 4: case 5:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
                         $probabilitas[$key] = $bobotValue / $BT_normal;
                         break;
-                    case 6: case 7: case 8: case 9: case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 5:
                         $probabilitas[$key] = $bobotValue / $BT_kering;
                         break;
-                    case 10: case 11: case 12: case 4:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 4:
                         $probabilitas[$key] = $bobotValue / $BT_gelap;
                         break;
-                    case 13: case 14: case 15:
+                    case 13:
+                    case 14:
+                    case 15:
                         $probabilitas[$key] = $bobotValue / $BT_kombinasi;
                         break;
                 }
@@ -135,7 +160,7 @@ class Jenis_Bibir extends BaseController
         }
 
         $kategori_finansial = session()->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
- 
+
         $range = [
             1 => [0, 50000],
             2 => [50001, 100000],
@@ -145,10 +170,16 @@ class Jenis_Bibir extends BaseController
 
         if (isset($range[$kategori_finansial])) {
             [$low, $high] = $range[$kategori_finansial];
-            $list_produk = array_filter($list_produk, function($produk) use ($low, $high) {
+            $list_produk = array_filter($list_produk, function ($produk) use ($low, $high) {
                 return $produk->harga >= $low && $produk->harga <= $high;
             });
         }
+
+        $produk_log = array_map(function ($p) {
+            return $p->id_produk . ' - ' . $p->nama_produk;
+        }, $list_produk);
+
+        log_message('debug', 'Hasil produk dari proses_perhitungan: ' . implode(', ', $produk_log));
 
         session()->set('SESS_KBS_LIPSTIK_CERTAINTY', max($nilai));
         session()->set('SESS_KBS_LIPSTIK_JENIS_BIBIR', $id_JB);
@@ -156,16 +187,16 @@ class Jenis_Bibir extends BaseController
         session()->set('SESS_KBS_LIPSTIK_TONE_KULIT', $tone_kulit);
 
         $dataKondisiBibir = [
-            'id_jawaban'    => $lastInsertId, 
-            'normal'        => $p_normal,
-            'kering'        => $p_kering,
-            'gelap'         => $p_gelap,  
-            'kombinasi'     => $p_kombinasi,
-            'created_at'    => date('Y-m-d H:i:s'),
-            'updated_at'    => date('Y-m-d H:i:s'),
+            'id_jawaban' => $lastInsertId,
+            'normal' => $p_normal,
+            'kering' => $p_kering,
+            'gelap' => $p_gelap,
+            'kombinasi' => $p_kombinasi,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-$this->KondisiBibir_model->insert($dataKondisiBibir);
+        $this->KondisiBibir_model->insert($dataKondisiBibir);
 
         $data = [
             'p_normal' => $p_normal,
@@ -188,21 +219,38 @@ $this->KondisiBibir_model->insert($dataKondisiBibir);
 
     public function rekomendasi($has_submit = false)
     {
-        $filter_id = -1;
-
+        $filter_id = [];
         if ($this->request->getPost('filter_produk')) {
             $filter_produk = $this->request->getPost('filter_produk');
             if (!array_key_exists('filter_semua', $filter_produk)) {
-                $filter_id = $filter_produk;
+                $filter_id = array_map('intval', $filter_produk); // pastikan ID angka
             }
         }
 
         $data = session()->get('SESS_KBS_LIPSTIK_RESULT');
         $id_JB = session()->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
         $tone_kulit = (int) session()->get('SESS_KBS_LIPSTIK_TONE_KULIT');
+        $kategori_finansial = session()->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
 
-
+        // ambil produk dari model
         $list_produk = $this->Kriteria_model->produk_by_jb_and_filter_tone($id_JB, $filter_id, $tone_kulit);
+
+        // filter finansial di sini
+        $range = [
+            1 => [0, 50000],
+            2 => [50001, 100000],
+            3 => [100001, 200000],
+            4 => [200001, PHP_INT_MAX]
+        ];
+
+        if (isset($range[$kategori_finansial])) {
+            [$low, $high] = $range[$kategori_finansial];
+            $list_produk = array_filter($list_produk, function ($produk) use ($low, $high) {
+                return $produk->harga >= $low && $produk->harga <= $high;
+            });
+        }
+
+        log_message('debug', 'Produk sesudah filter finansial: ' . print_r($list_produk, true));
 
         $data['list_produk'] = $list_produk;
         $data['filters'] = $this->kbs_m->getAllFilter();
@@ -211,4 +259,5 @@ $this->KondisiBibir_model->insert($dataKondisiBibir);
 
         return view('user/sidebar_user') . view('user/hasil', $data);
     }
+
 }

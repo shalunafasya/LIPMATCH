@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\User; 
+namespace App\Controllers\User;
 
 use App\Controllers\BaseController;
 use App\Models\User\Rekomendasi_model;

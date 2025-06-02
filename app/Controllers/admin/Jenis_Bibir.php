@@ -35,28 +35,22 @@ class Jenis_Bibir extends BaseController
 
     public function proses_tambah_data()
     {
-        // Validasi input
         $validation = \Config\Services::validation();
         $validation->setRules([
-            'jenis_bibir' => 'required|min_length[3]',  // Pastikan data tidak kosong dan panjang minimal 3 karakter
+            'jenis_bibir' => 'required|min_length[3]',
         ]);
 
         if (!$validation->withRequest($this->request)->run()) {
-            // Jika validasi gagal, kembalikan ke form tambah data dengan pesan error
             return redirect()->to('/admin/jenis_bibir/tambah')
                 ->withInput()
                 ->with('errors', $validation->getErrors());
         }
 
-        // Ambil data dari form
         $jenis_bibir = $this->request->getPost('jenis_bibir');
-
-        // Siapkan data untuk dimasukkan ke database
         $data = [
             'nama_JB' => $jenis_bibir
         ];
 
-        // Simpan data ke database
         $this->jbModel->tambah_data($data);
         return redirect()->to('/admin/jenis_bibir');
     }
@@ -97,8 +91,6 @@ class Jenis_Bibir extends BaseController
                 ->with('error', 'Jenis Bibir tidak boleh kosong')
                 ->withInput();
         }
-
-        // Siapkan data untuk update
         $data = [
             'nama_JB' => $jenis_bibir
         ];

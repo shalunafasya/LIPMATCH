@@ -6,7 +6,6 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// Routing publik / user
 $routes->get('/', 'Login::index');
 $routes->get('login/home', 'Login::home');
 $routes->post('login/proses', 'Login::proses');
@@ -22,16 +21,15 @@ $routes->get('User/Jenis_Bibir/rekomendasi/(:any)', 'User\Jenis_Bibir::rekomenda
 $routes->get('User/Jenis_Bibir/rekomendasi', 'User\Jenis_Bibir::rekomendasi');
 $routes->post('User/Jenis_Bibir/rekomendasi', 'User\Jenis_Bibir::rekomendasi');
 
-$routes->get('user/rekomendasi', 'User\Rekomendasi::index'); 
+$routes->get('user/rekomendasi', 'User\Rekomendasi::index');
 
 $routes->get('User/KBSController/profile_matching', 'User\KBSController::profile_matching');
-$routes->post('User/KBSController/submit_sus_feedback', 'User\KBSController::submit_sus_feedback');  
-$routes->post('User/KBSController/submit_csat_feedback', 'User\KBSController::submit_csat_feedback'); 
+$routes->post('User/KBSController/submit_sus_feedback', 'User\KBSController::submit_sus_feedback');
+$routes->post('User/KBSController/submit_csat_feedback', 'User\KBSController::submit_csat_feedback');
 $routes->get('User/KBSController/product_button/(:any)/(:num)', 'User\KBSController::product_button/$1/$2');
 $routes->get('User/KBSController/save_my_recommendation/(:segment)', 'User\KBSController::save_my_recommendation/$1');
 
-// Group admin routes
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
     // Produk
     $routes->get('produk', 'Produk::index');
     $routes->get('Produk', 'Produk::index');
@@ -100,8 +98,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
     $routes->post('reset-csat', 'CSAT::reset');
 });
 
-
-// $routes->setAutoRoute(true); // Hanya untuk development
 
 
 

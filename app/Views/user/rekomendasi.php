@@ -16,7 +16,8 @@
 
         <div class="container-fluid">
             <div class="card shadow mb-7">
-                <h1 class="h5 ml-3 mb-3 mt-3 text-gray-800">Silahkan Pilih Kondisi Bibir yang Sesuai untuk Mengetahui Rekomendasi Lipstik</h1>
+                <h1 class="h5 ml-3 mb-3 mt-3 text-gray-800">Silahkan Pilih Kondisi Bibir yang Sesuai untuk Mengetahui
+                    Rekomendasi Lipstik</h1>
                 <form action="" method="post" class="mb-3 mt-2 form-inline">
                     <label for="JB" class="col-sm-2 col-form-label">Kondisi Bibir : </label>
                     <div class="form-group mx-sm-3 mb-0">
@@ -64,19 +65,19 @@
         </a>
 
         <!-- Scripts -->
-        <script src="<?=base_url()?>assets/template/vendor/jquery/jquery.min.js"></script>
-        <script src="<?=base_url()?>assets/template/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="<?=base_url()?>assets/template/vendor/jquery-easing/jquery.easing.min.js"></script>
-        <script src="<?=base_url()?>assets/template/js/sb-admin-2.min.js"></script>
-        <script src="<?=base_url()?>assets/template/vendor/chart.js/Chart.min.js"></script>
-        <script src="<?=base_url()?>assets/template/js/demo/chart-area-demo.js"></script>
-        <script src="<?=base_url()?>assets/template/js/demo/chart-pie-demo.js"></script>
+        <script src="<?= base_url() ?>assets/template/vendor/jquery/jquery.min.js"></script>
+        <script src="<?= base_url() ?>assets/template/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="<?= base_url() ?>assets/template/vendor/jquery-easing/jquery.easing.min.js"></script>
+        <script src="<?= base_url() ?>assets/template/js/sb-admin-2.min.js"></script>
+        <script src="<?= base_url() ?>assets/template/vendor/chart.js/Chart.min.js"></script>
+        <script src="<?= base_url() ?>assets/template/js/demo/chart-area-demo.js"></script>
+        <script src="<?= base_url() ?>assets/template/js/demo/chart-pie-demo.js"></script>
 
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 load_produk();
 
-                $("#JB").change(function() {
+                $("#JB").change(function () {
                     load_produk();
                 });
             });
@@ -87,7 +88,7 @@
                     type: 'get',
                     url: "<?= base_url('User/Rekomendasi/load_produk') ?>",
                     data: { jenis_bibir: jenis_bibir },
-                    success: function(data) {
+                    success: function (data) {
                         $("#dataTable tbody").html(data);
                     }
                 });

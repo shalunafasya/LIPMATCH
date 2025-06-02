@@ -1,10 +1,11 @@
 <style>
     /* Style header tabel */
     #dataTable thead tr {
-        background-color: #F7C6D1 ; 
-        color: #5A2A3A ; /* coklat gelap */
+        background-color: #F7C6D1;
+        color: #5A2A3A;
+        /* coklat gelap */
         font-weight: 700;
-        border-bottom: 3px solid #EA84B4; 
+        border-bottom: 3px solid #EA84B4;
     }
 
     /* Style teks header */
@@ -26,7 +27,8 @@
 
     /* Baris zebra */
     #dataTable tbody tr:nth-child(even) {
-        background-color: #fff0f5; /* pink sangat pucat */
+        background-color: #fff0f5;
+        /* pink sangat pucat */
     }
 
     #dataTable tbody tr:nth-child(odd) {
@@ -34,12 +36,14 @@
     }
 
     .badge.badge-info {
-    background-color: #F7C6D1 !important; /* pink muda lembut */
-    color: #5A2A3A !important; /* coklat gelap */
-    font-weight: 600;
-    border-radius: 0.25rem; /* radius badge, bisa disesuaikan */
-}
-
+        background-color: #F7C6D1 !important;
+        /* pink muda lembut */
+        color: #5A2A3A !important;
+        /* coklat gelap */
+        font-weight: 600;
+        border-radius: 0.25rem;
+        /* radius badge, bisa disesuaikan */
+    }
 </style>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
@@ -59,7 +63,8 @@
         <div class="container-fluid">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <a href="<?= base_url('admin/Produk/tambah_data') ?>" class="btn btn-success mr-1 font-weight-bold"><i class="fas  fa-print"></i> Tambah Data</a>
+                    <a href="<?= base_url('admin/Produk/tambah_data') ?>"
+                        class="btn btn-success mr-1 font-weight-bold"><i class="fas  fa-print"></i> Tambah Data</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive float-right">
@@ -78,7 +83,7 @@
                             </thead>
                             <tbody>
                                 <?php $i = 1; ?>
-                                <?php foreach ($List_Produk as $Produk) : ?>
+                                <?php foreach ($List_Produk as $Produk): ?>
                                     <tr>
                                         <td><?= $Produk['jenis_lipstik'] ?></td>
                                         <td><?= $Produk['merk_produk'] ?></td>
@@ -90,8 +95,8 @@
                                             if (!empty($selected_jb)) {
                                                 foreach ($selected_jb as $id) {
                                                     foreach ($List_JB as $jb) {
-                                                        if ((int)$jb['id_JB'] === (int)trim($id)) {
-                                                            echo '<span class="badge badge-info mr-1">' . $jb['nama_JB']. '</span>';
+                                                        if ((int) $jb['id_JB'] === (int) trim($id)) {
+                                                            echo '<span class="badge badge-info mr-1">' . $jb['nama_JB'] . '</span>';
                                                         }
                                                     }
                                                 }
@@ -107,7 +112,7 @@
                                             if (!empty($selected_ids)) {
                                                 foreach ($selected_ids as $id) {
                                                     foreach ($List_TK as $tk) {
-                                                        if ((int)$tk['id_tk'] === (int)trim($id)) {
+                                                        if ((int) $tk['id_tk'] === (int) trim($id)) {
                                                             echo '<span class="badge badge-info mr-1">' . $tk['tone_kulit'] . '</span>';
                                                         }
                                                     }
@@ -117,11 +122,14 @@
                                             }
                                             ?>
                                         </td>
-                                        <td><img src="<?= base_url("/assets/image/produk/" . $Produk['gambar']) ?>" width="100" height="100"></td>
+                                        <td><img src="<?= base_url("/assets/image/produk/" . $Produk['gambar']) ?>"
+                                                width="100" height="100"></td>
                                         <td><?= $Produk['harga'] ?></td>
                                         <td>
-                                            <a href="<?= base_url() ?>admin/Produk/editdata/<?= $Produk['id_produk'] ?>"><button type="button" class="btn btn-success btn-icon-text">Edit</button></a>
-                                            <a href="<?= base_url() ?>admin/Produk/hapusdata/<?= $Produk['id_produk'] ?>"><button type="button" class="btn btn-danger btn-icon-text">Hapus</button></a>
+                                            <a href="<?= base_url() ?>admin/Produk/editdata/<?= $Produk['id_produk'] ?>"><button
+                                                    type="button" class="btn btn-success btn-icon-text">Edit</button></a>
+                                            <a href="<?= base_url() ?>admin/Produk/hapusdata/<?= $Produk['id_produk'] ?>"><button
+                                                    type="button" class="btn btn-danger btn-icon-text">Hapus</button></a>
                                         </td>
                                     </tr>
                                 <?php endforeach ?>
@@ -149,7 +157,7 @@
 </div>
 
 <script>
-  $(document).ready(function() {
-    $('#dataTable').DataTable();
-  });
+    $(document).ready(function () {
+        $('#dataTable').DataTable();
+    });
 </script>

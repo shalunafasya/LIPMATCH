@@ -26,7 +26,8 @@
 
             <div class="row mb-3">
                 <div class="col-12 text-right">
-                    <form method="post" action="/admin/reset-sus" onsubmit="return confirm('Yakin ingin menghapus semua data SUS?');">
+                    <form method="post" action="/admin/reset-sus"
+                        onsubmit="return confirm('Yakin ingin menghapus semua data SUS?');">
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-trash-alt"></i> Reset Data SUS
                         </button>
@@ -54,7 +55,7 @@
                                     </thead>
                                     <tbody>
                                         <?php $number = 1; ?>
-                                        <?php foreach($soal_jawaban as $sj): ?>
+                                        <?php foreach ($soal_jawaban as $sj): ?>
                                             <tr>
                                                 <td><?= $number++; ?></td>
                                                 <td><?= $sj['feedback_id'] ?></td>

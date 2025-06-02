@@ -12,26 +12,26 @@ class JL_model extends Model
 
     public function tampildata()
     {
-        return $this->findAll(); 
+        return $this->findAll();
     }
 
     public function tambah_dataJL($data)
     {
-        return $this->insert($data); 
+        return $this->insert($data);
     }
 
     public function hapusdata($id_jl)
     {
-        return $this->delete($id_jl); 
+        return $this->delete($id_jl);
     }
 
     public function get_by_id($id_jl)
     {
-        return $this->find($id_jl); 
+        return $this->find($id_jl);
     }
 
     public function editdata($id_jl, $data)
     {
-        return $this->update($id_jl, $data); 
+        return $this->update($id_jl, $data);
     }
 }

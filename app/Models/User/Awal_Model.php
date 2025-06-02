@@ -6,9 +6,9 @@ use CodeIgniter\Model;
 
 class Awal_Model extends Model
 {
-    protected $table = 'data_pengguna'; 
-    protected $primaryKey = 'id'; 
-    protected $allowedFields = ['nama']; 
+    protected $table = 'data_pengguna';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['nama'];
 
     public function simpan_nama($data)
     {
@@ -18,10 +18,10 @@ class Awal_Model extends Model
     public function cek_tone($id_tk)
     {
         return $this->db->table('tone_kulit')
-                        ->select('tone_kulit')
-                        ->where('id_tk', $id_tk)
-                        ->get()
-                        ->getRow(); 
+            ->select('tone_kulit')
+            ->where('id_tk', $id_tk)
+            ->get()
+            ->getRow();
     }
 
     public function getToneKulit()

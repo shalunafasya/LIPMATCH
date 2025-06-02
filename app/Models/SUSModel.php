@@ -11,7 +11,7 @@ class SUSModel extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->db = \Config\Database::connect(); 
+        $this->db = \Config\Database::connect();
     }
 
     public function getSkor()
@@ -23,15 +23,15 @@ class SUSModel extends Model
 
         foreach ($feedbacks as $feedback) {
             $skors = $this->db->table('sus_feedback')
-                              ->where('feedback_id', $feedback['feedback_id'])
-                              ->get()
-                              ->getResultArray();
+                ->where('feedback_id', $feedback['feedback_id'])
+                ->get()
+                ->getResultArray();
 
             foreach ($skors as $skor) {
                 if ($skor['id_soal'] % 2 == 0) {
-                    $totalSkor += 5 - (int)$skor['jawaban'];
+                    $totalSkor += 5 - (int) $skor['jawaban'];
                 } else {
-                    $totalSkor += (int)$skor['jawaban'] - 1;
+                    $totalSkor += (int) $skor['jawaban'] - 1;
                 }
             }
         }
