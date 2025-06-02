@@ -39,9 +39,7 @@ class KBSController extends BaseController
             3 => 2.5,
             -3 => 2.0,
             4 => 1.5,
-            -4 => 1.0,
-            5 => 0.5,
-            -5 => 0.0
+            -4 => 1.0
         ];
 
         $normalize_jenis_bibir = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
@@ -94,24 +92,15 @@ class KBSController extends BaseController
         foreach ($normalize_alternative as $na) {
             $GAP[] = [
                 'id' => $na['id'],
-                'kategori_finansial' => $na['kategori_finansial'] - $target['kategori_finansial'],
-                'jenis_bibir' => $na['jenis_bibir'] - $target['jenis_bibir'],
-                'certainty' => $na['certainty'] - $target['certainty'],
-                'tone_kulit' => $na['tone_kulit'] - $target['tone_kulit']
+                'kategori_finansial' => max(min($na['kategori_finansial'] - $target['kategori_finansial'], 4), -4),
+                'jenis_bibir' => max(min($na['jenis_bibir'] - $target['jenis_bibir'], 4), -4),
+                'certainty' => max(min($na['certainty'] - $target['certainty'], 4), -4),
+                'tone_kulit' => max(min($na['tone_kulit'] - $target['tone_kulit'], 4), -4)
             ];
         }
 
         $konversi = [];
         foreach ($GAP as $gap) {
-            if (
-                !isset($GAP_mapping[$gap['kategori_finansial']]) ||
-                !isset($GAP_mapping[$gap['jenis_bibir']]) ||
-                !isset($GAP_mapping[$gap['certainty']]) ||
-                !isset($GAP_mapping[$gap['tone_kulit']])
-            ) {
-                continue;
-            }
-
             $konversi[] = [
                 'id' => $gap['id'],
                 'kategori_finansial' => $GAP_mapping[$gap['kategori_finansial']],
@@ -153,14 +142,11 @@ class KBSController extends BaseController
         $matched_product_ids = array_column($matched_product_rows, 'id_produk');
         log_message('debug', 'MATCHED PRODUCT IDS: ' . json_encode($matched_product_ids));
 
-
         $fav_products = $this->kbs_m->getAllFavoritedProductIds();
-
         $fav_product_ids = array_column($fav_products, 'id_produk');
         log_message('debug', 'FAVORITE IDS: ' . json_encode($fav_product_ids));
 
         $final_ids = array_intersect($matched_product_ids, $fav_product_ids);
-
         log_message('debug', 'FINAL MATCHED & FAVORITE IDS: ' . json_encode($final_ids));
 
         if (!empty($final_ids)) {
@@ -189,14 +175,11 @@ class KBSController extends BaseController
             $filtered_products = [];
         }
 
-
         $result['products'] = $filtered_products;
-
         log_message('debug', 'FINAL PRODUCTS TO FRONTEND: ' . json_encode($result['products']));
         return $this->response->setJSON($result);
-
-
     }
+
 
 
     public function KBSAlgorithm()

@@ -223,7 +223,7 @@ class Jenis_Bibir extends BaseController
         if ($this->request->getPost('filter_produk')) {
             $filter_produk = $this->request->getPost('filter_produk');
             if (!array_key_exists('filter_semua', $filter_produk)) {
-                $filter_id = array_map('intval', $filter_produk); // pastikan ID angka
+                $filter_id = array_map('intval', $filter_produk);
             }
         }
 
@@ -232,10 +232,8 @@ class Jenis_Bibir extends BaseController
         $tone_kulit = (int) session()->get('SESS_KBS_LIPSTIK_TONE_KULIT');
         $kategori_finansial = session()->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
 
-        // ambil produk dari model
         $list_produk = $this->Kriteria_model->produk_by_jb_and_filter_tone($id_JB, $filter_id, $tone_kulit);
 
-        // filter finansial di sini
         $range = [
             1 => [0, 50000],
             2 => [50001, 100000],
