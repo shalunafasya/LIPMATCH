@@ -61,82 +61,46 @@ class Jenis_Bibir extends BaseController
             $lastInsertId = $this->jawabanBayes_model->getInsertID();
         }
 
-        $BT_normal = array_sum([
-            $bobot[1][0]->bobot,
-            $bobot[2][0]->bobot,
-            $bobot[3][0]->bobot,
-            $bobot[4][0]->bobot,
-            $bobot[5][0]->bobot
-        ]);
-        $BT_kering = array_sum([
-            $bobot[6][0]->bobot,
-            $bobot[7][0]->bobot,
-            $bobot[8][0]->bobot,
-            $bobot[9][0]->bobot,
-            $bobot[5][0]->bobot
-        ]);
-        $BT_gelap = array_sum([
-            $bobot[10][0]->bobot,
-            $bobot[11][0]->bobot,
-            $bobot[12][0]->bobot,
-            $bobot[4][0]->bobot
-        ]);
-        $BT_kombinasi = array_sum([
-            $bobot[13][0]->bobot,
-            $bobot[14][0]->bobot,
-            $bobot[15][0]->bobot
-        ]);
+        $kategoriSoal = [
+            'normal'     => [1, 2, 3, 4, 5],
+            'kering'     => [5, 6, 7, 8, 9],
+            'gelap'      => [4, 10, 11, 12],
+            'kombinasi'  => [13, 14, 15],
+        ];
+
+        $BT = [];
+        foreach ($kategoriSoal as $kategori => $soals) {
+            $BT[$kategori] = 0;
+            foreach ($soals as $no) {
+                $BT[$kategori] += $bobot[$no][0]->bobot;
+            }
+        }
 
         $probabilitas = [];
-        foreach ($bobot as $key => $value) {
-            $bobotValue = $value[0]->bobot;
-            if ($bobotValue == 0) {
-                $probabilitas[$key] = 0;
-            } else {
-                switch ($key) {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        $probabilitas[$key] = $bobotValue / $BT_normal;
-                        break;
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 5:
-                        $probabilitas[$key] = $bobotValue / $BT_kering;
-                        break;
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 4:
-                        $probabilitas[$key] = $bobotValue / $BT_gelap;
-                        break;
-                    case 13:
-                    case 14:
-                    case 15:
-                        $probabilitas[$key] = $bobotValue / $BT_kombinasi;
-                        break;
-                }
+        foreach ($kategoriSoal as $kategori => $soals) {
+            foreach ($soals as $no) {
+                $probabilitas[$kategori][$no] = $BT[$kategori] > 0 
+                    ? $bobot[$no][0]->bobot / $BT[$kategori]
+                    : 0;
             }
         }
 
         $NA_bobot = [];
-        foreach ($probabilitas as $key => $value) {
-            $NA_bobot[$key] = ($bobot[$key][0]->bobot / 2) * $value;
+        foreach ($kategoriSoal as $kategori => $soals) {
+            foreach ($soals as $no) {
+                $NA_bobot[$kategori][$no] = ($bobot[$no][0]->bobot / 2) * $probabilitas[$kategori][$no];
+            }
         }
 
-        $AT_normal = array_sum([$NA_bobot[1], $NA_bobot[2], $NA_bobot[3], $NA_bobot[4], $NA_bobot[5]]);
-        $AT_kering = array_sum([$NA_bobot[6], $NA_bobot[7], $NA_bobot[8], $NA_bobot[9], $NA_bobot[5]]);
-        $AT_gelap = array_sum([$NA_bobot[10], $NA_bobot[11], $NA_bobot[12], $NA_bobot[4]]);
-        $AT_kombinasi = array_sum([$NA_bobot[13], $NA_bobot[14], $NA_bobot[15]]);
+        $AT = [];
+        foreach ($NA_bobot as $kategori => $values) {
+            $AT[$kategori] = array_sum($values);
+        }
 
-        $p_normal = $AT_normal * 100;
-        $p_kering = $AT_kering * 100;
-        $p_gelap = $AT_gelap * 100;
-        $p_kombinasi = $AT_kombinasi * 100;
+        $p_normal     = $AT['normal'] * 100 * 2 ;
+        $p_kering     = $AT['kering'] * 100 * 2;
+        $p_gelap      = $AT['gelap'] * 100 * 2;
+        $p_kombinasi  = $AT['kombinasi'] * 100 * 2;
 
         $nilai_max = max($p_normal, $p_kering, $p_gelap, $p_kombinasi);
 

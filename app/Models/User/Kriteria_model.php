@@ -31,7 +31,7 @@ class Kriteria_model extends Model
             ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
             ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
             ->join('tone_kulit', 'FIND_IN_SET(tone_kulit.id_tk, produk.id_tk) > 0')
-            ->where('produk.id_JB', $id_JB)
+            ->where("FIND_IN_SET('$id_JB', produk.id_JB) >", 0)
             ->where("FIND_IN_SET('$id_tk', produk.id_tk) >", 0)
             ->groupBy('produk.id_produk')
             ->orderBy('produk.rekomendasi', 'DESC')
@@ -46,7 +46,7 @@ class Kriteria_model extends Model
         $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, tone_kulit.tone_kulit as tone_kulit, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.gambar');
         $builder->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik');
         $builder->join('tone_kulit', 'produk.id_tk = tone_kulit.id_tk');
-        $builder->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB');
+        $builder->join('jenis_bibir', 'FIND_IN_SET(jenis_bibir.id_JB, produk.id_JB) > 0');
         $builder->where('produk.id_JB', $id_JB);
 
         if (!is_null($id_tk)) {
