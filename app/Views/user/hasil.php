@@ -273,7 +273,6 @@
                         <div class="modal-body text-center">
                             <p>Bagaimanakah tingkat kepuasan Anda terhadap hasil rekomendasi yang didapatkan dari
                                 website LIPMATCH?</p>
-                            <input type="hidden" name="csat_1" id="csat-1">
                             <div class="emoji-options">
                                 <span class="emoji" onclick="setCSATEmoji(this, 1)">😡</span>
                                 <span class="emoji" onclick="setCSATEmoji(this, 2)">😕</span>

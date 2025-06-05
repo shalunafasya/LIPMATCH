@@ -55,8 +55,8 @@
                         <option value="3">Rp 100.001 - Rp 200.000</option>
                         <option value="4">&ge; Rp 200.001</option>
                     </select>
-                    <select class="form-control" name="cek_tone">
-                        <option value="0" disabled selected hidden>-= Tone Kulit Anda =-</option>
+                    <select class="form-control" name="cek_tone" required>
+                        <option value="" disabled selected hidden>-= Tone Kulit Anda =-</option>
                         <?php foreach ($tone_kulit as $tone): ?>
                             <option value="<?= $tone->id_tk ?>"><?= $tone->tone_kulit ?></option>
                         <?php endforeach; ?>

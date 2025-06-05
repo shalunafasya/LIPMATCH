@@ -151,7 +151,7 @@ class Jenis_Bibir extends BaseController
         }
 
         $nilai = [$p_normal, $p_kering, $p_gelap, $p_kombinasi];
-        $tone_kulit = (int) session()->get('sess_tone_kulit');
+        $tone_kulit = (int) session()->get('SESS_KBS_LIPSTIK_TONE_KULIT');
 
         if (count(array_unique($nilai)) == 1) {
             $list_produk = $this->Kriteria_model->all_produk();
@@ -212,6 +212,13 @@ class Jenis_Bibir extends BaseController
         $data['filters'] = $this->kbs_m->getAllFilter();
         $data['question'] = $this->kbs_m->getSusQuestion();
         $data['has_submit'] = (session()->get('has_submit')) ? '1' : '0';
+
+        log_message('debug', 'Jenis Bibir terdeteksi: ' . $id_JB);
+        log_message('debug', 'Tone kulit: ' . $tone_kulit);
+        log_message('debug', 'Nilai Probabilitas: Normal=' . $p_normal . ', Kering=' . $p_kering . ', Gelap=' . $p_gelap . ', Kombinasi=' . $p_kombinasi);
+        log_message('debug', 'Jumlah produk awal: ' . count($list_produk));
+        log_message('debug', 'Kategori finansial: ' . $kategori_finansial);
+
 
 
         return view('user/sidebar_user') . view('user/hasil', $data);
