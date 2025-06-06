@@ -131,9 +131,12 @@
                     </div>
                 </div>
             </li>
-
-
-
+            <!-- Logout Button -->
+            <li class="nav-item mt-4 px-3" style="margin-bottom: 20px;">
+                <a class="btn btn-sm btn-outline-light btn-block" href="<?= base_url('login') ?>">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
         </ul>
 
         <!-- End of Sidebar -->

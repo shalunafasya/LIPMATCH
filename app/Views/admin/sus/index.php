@@ -7,7 +7,7 @@
         <!-- Topbar -->
         <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow-sm">
             <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1">Dashboard SUS</span>
+                <span class="navbar-brand mb-0 h1" style="color: #EA84B4">Dashboard SUS</span>
             </div>
         </nav>
 

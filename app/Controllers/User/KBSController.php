@@ -26,6 +26,7 @@ class KBSController extends BaseController
 
     public function profile_matching()
     {
+        
         log_message('debug', '=== MASUK KE FUNGSI PROFILE MATCHING ===');
 
         $session = session();
@@ -42,7 +43,7 @@ class KBSController extends BaseController
             -4 => 1.0
         ];
 
-        $normalize_jenis_bibir = [1 => 1, 2 => 2, 3 => 3, 4 => 4];
+        $normalize_jenis_bibir = [1 => 1, 9 => 2, 13 => 3, 19 => 4];
 
         $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
         $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
@@ -180,8 +181,6 @@ class KBSController extends BaseController
         return $this->response->setJSON($result);
     }
 
-
-
     public function KBSAlgorithm()
     {
         $session = session();
@@ -190,7 +189,7 @@ class KBSController extends BaseController
         $tone_kulit = $session->get('SESS_KBS_LIPSTIK_TONE_KULIT');
         $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
 
-        if ($kategori_finansial == 5) {
+        if ($kategori_finansial == 4) {
             $result_products = $this->kbs_m->getProductsBySkin($jenis_bibir, 'DESC');
         } elseif ($kategori_finansial == 1) {
             $result_products = $this->kbs_m->getProductsBySkin($jenis_bibir, 'ASC');

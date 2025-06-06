@@ -22,11 +22,10 @@
     <link href="<?= base_url() ?>assets/template/css/sb-admin-2.min.css" rel="stylesheet">
     <style type="text/css">
         body {
-            background: url(<?php echo base_url("assets/image/background.jpg"); ?>);
-            background-repeat: no-repeat;
+            background: url(<?= base_url("assets/image/background.jpg"); ?>) no-repeat center center fixed;
             background-size: cover;
+            font-family: 'Montserrat', sans-serif;
         }
-
         .center {
             position: absolute;
             left: 50%;
@@ -41,6 +40,11 @@
 <body>
     <div id="content-wrapper" class="d-flex flex-column flexbox-container">
         <div id="content">
+            <div class="text-right pr-4 pt-3">
+                <a href="<?= base_url('login') ?>" class="btn btn-outline-light btn-sm" style="background-color: rgba(255, 255, 255, 0.2); color: #fff;">
+                    <i class="fas fa-user-shield"></i> Admin Login
+                </a>
+            </div>
             <div class="center">
                 <h1 style="text-align:center;" class=" mb-0 text-primary">LIPMATCH</h1>
                 <h3 style="text-align:center;" class=" mt-2 ml-1 mb-3 text-primary ">silahkan masukan biodata anda </h3>

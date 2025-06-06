@@ -172,5 +172,18 @@ class KBSModel extends Model
             ->getResultArray();
     }
 
+    public function getProdukByIds($ids = [])
+    {
+        if (empty($ids)) return [];
+
+        return $this->db->table('produk')
+            ->select('produk.*, jenis_lipstik.id_jl, jenis_lipstik.jenis_lipstik')
+            ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
+            ->whereIn('produk.id_produk', $ids)
+            ->orderBy('produk.rekomendasi', 'DESC')
+            ->orderBy('produk.harga', 'ASC')
+            ->get()
+            ->getResult();
+    }
 
 }

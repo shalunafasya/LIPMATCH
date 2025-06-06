@@ -47,7 +47,9 @@ class Kriteria_model extends Model
         $builder->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik');
         $builder->join('tone_kulit', 'produk.id_tk = tone_kulit.id_tk');
         $builder->join('jenis_bibir', 'FIND_IN_SET(jenis_bibir.id_JB, produk.id_JB) > 0');
-        $builder->where('produk.id_JB', $id_JB);
+        
+        $builder->where("FIND_IN_SET('$id_JB', produk.id_JB) >", 0);
+
 
         if (!is_null($id_tk)) {
             $builder->where("FIND_IN_SET('$id_tk', produk.id_tk) >", 0);

@@ -45,7 +45,9 @@
 
         <!-- Topbar -->
         <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1" style="color: #EA84B4">Dashboard Kelola Data Jenis Bibir</span>
+            </div>
         </nav>
 
         <div class="container-fluid">

@@ -97,7 +97,7 @@ class Jenis_Bibir extends BaseController
             $AT[$kategori] = array_sum($values);
         }
 
-        $p_normal     = $AT['normal'] * 100 * 2 ;
+        $p_normal     = $AT['normal'] * 100 * 2;
         $p_kering     = $AT['kering'] * 100 * 2;
         $p_gelap      = $AT['gelap'] * 100 * 2;
         $p_kombinasi  = $AT['kombinasi'] * 100 * 2;
@@ -172,6 +172,10 @@ class Jenis_Bibir extends BaseController
         ];
 
         session()->set('SESS_KBS_LIPSTIK_RESULT', $data);
+
+        $product_ids = array_column($list_produk, 'id_produk');
+        session()->set('SESS_KBS_PRODUK_HASIL', $product_ids);
+        
         $data['list_produk'] = $list_produk;
         $data['filters'] = $this->kbs_m->getAllFilter();
         $data['question'] = $this->kbs_m->getSusQuestion();
@@ -183,28 +187,35 @@ class Jenis_Bibir extends BaseController
         log_message('debug', 'Jumlah produk awal: ' . count($list_produk));
         log_message('debug', 'Kategori finansial: ' . $kategori_finansial);
 
-
-
         return view('user/sidebar_user') . view('user/hasil', $data);
     }
 
     public function rekomendasi($has_submit = false)
     {
-        $filter_id = [];
-        if ($this->request->getPost('filter_produk')) {
-            $filter_produk = $this->request->getPost('filter_produk');
-            if (!array_key_exists('filter_semua', $filter_produk)) {
-                $filter_id = array_map('intval', $filter_produk);
-            }
+        $produk_hasil = session()->get('SESS_KBS_PRODUK_HASIL') ?? [];
+
+        if (empty($produk_hasil)) {
+            return redirect()->to('User/Jenis_Bibir/proses_perhitungan')->with('error', 'Silakan lakukan proses perhitungan terlebih dahulu.');
         }
 
-        $data = session()->get('SESS_KBS_LIPSTIK_RESULT');
-        $id_JB = session()->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
-        $tone_kulit = (int) session()->get('SESS_KBS_LIPSTIK_TONE_KULIT');
+        $filter_id = [];
+        $filter_semua = $this->request->getPost('filter_semua'); 
+        $filter_produk = $this->request->getPost('filter_produk');
+
+        if ($filter_semua !== 'all' && is_array($filter_produk)) {
+            $filter_id = array_map('intval', $filter_produk);
+        }
+
+        $list_produk = $this->kbs_m->getProdukByIds($produk_hasil); 
+
+        if (!empty($filter_id)) {
+            $list_produk = array_filter($list_produk, function ($produk) use ($filter_id) {
+                return in_array($produk->id_jl, $filter_id);
+
+            });
+        }
+
         $kategori_finansial = session()->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
-
-        $list_produk = $this->Kriteria_model->produk_by_jb_and_filter_tone($id_JB, $filter_id, $tone_kulit);
-
         $range = [
             1 => [0, 50000],
             2 => [50001, 100000],
@@ -219,8 +230,7 @@ class Jenis_Bibir extends BaseController
             });
         }
 
-        log_message('debug', 'Produk sesudah filter finansial: ' . print_r($list_produk, true));
-
+        $data = session()->get('SESS_KBS_LIPSTIK_RESULT');
         $data['list_produk'] = $list_produk;
         $data['filters'] = $this->kbs_m->getAllFilter();
         $data['question'] = $this->kbs_m->getSusQuestion();
@@ -228,5 +238,4 @@ class Jenis_Bibir extends BaseController
 
         return view('user/sidebar_user') . view('user/hasil', $data);
     }
-
 }

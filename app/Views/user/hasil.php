@@ -88,24 +88,25 @@
                         melakukan konsultasi langsung dengan ahli </h1>
                     <div class="container">
                         <div class="row my-4">
-                            <div class="col-6">
-                                <button class="btn btn-warning" data-toggle="modal" data-target="#recommendationModal"
+                            <div class="col-12 col-md-6 mb-2">
+                                <button class="btn btn-warning w-100" data-toggle="modal" data-target="#recommendationModal"
                                     onclick="showPofileMatchRecommendation()">
                                     <i class="fas fa-fw fa-star"></i> | Rekomendasi
                                 </button>
                             </div>
-                            <div class="col-6">
+                            <div class="col-12 col-md-6 mb-2 text-md-right">
+                                <button class="btn btn-primary mr-2 mb-2" data-toggle="modal" data-target="#filterModal">
+                                    FILTER
+                                </button>
                                 <button id="submit-button" onclick="submitMyData(this)"
-                                    class="btn btn-success float-right border-radius" disabled>
+                                    class="btn btn-success border-radius mb-2" disabled>
                                     SUBMIT REKOMENDASI
                                 </button>
-                                <button class="btn btn-primary float-right mr-2" data-toggle="modal"
-                                    data-target="#filterModal">FILTER</button>
                             </div>
                         </div>
                         <div class="row my-4">
                             <?php foreach ($list_produk as $list): ?>
-                                <div class="col-3 mb-2">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
                                     <div class="card">
                                         <img class="card-img-top"
                                             src="<?= base_url("/assets/image/produk/" . $list->gambar) ?>">

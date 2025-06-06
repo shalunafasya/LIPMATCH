@@ -120,7 +120,21 @@
       padding: 30px 20px;
     }
   }
+
+  a[href*="user/awal"] {
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    a[href*="user/awal"]:hover {
+      color: #333 !important;
+      text-decoration: underline;
+    }
 </style>
+
+<a href="<?= base_url('user/awal') ?>" style="position: absolute; top: 30px; left: 30px; font-weight: 600; color: #EA84B4; text-decoration: none;">
+  ← Kembali ke Beranda
+</a>
 
 <div class="login-box">
   <div class="login-image">

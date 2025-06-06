@@ -7,8 +7,8 @@
         <!-- Topbar -->
         <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow-sm">
             <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1">Dashboard CSAT</span>
-            </div>
+                <span class="navbar-brand mb-0 h1" style="color: #EA84B4">Dashboard CSAT</span>
+            </div> 
         </nav>
 
         <div class="container-fluid">
