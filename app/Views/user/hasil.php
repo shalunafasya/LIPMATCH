@@ -349,36 +349,28 @@
 
             const showPofileMatchRecommendation = async () => {
                 console.info('Algoritma dijalankan...');
-                const result = await getProfileMatchingRecommendation().then(res => res);
+                const result = await getProfileMatchingRecommendation();
 
                 let temp = ``;
 
-                if (result.profile_matching != null) {
+                if (result.products && result.products.length > 0) {
                     console.table(result.profile_matching);
-
                     result.products.forEach((res, index) => {
                         temp += `<tr>
                             <td>${index + 1}</td>
                             <td>${res.nama_produk}</td>
-                            <td>${res.harga}</td>
+                            <td>Rp ${parseInt(res.harga).toLocaleString('id-ID')}</td>
                             <td>${res.merk_produk}</td>
                             <td>${res.jenis_lipstik}</td>
                         </tr>`;
                     });
                 } else {
-                    result.products.forEach((res, index) => {
-                        temp += `<tr>
-                            <td>${index + 1}</td>
-                            <td>${res.nama_produk}</td>
-                            <td>${res.harga}</td>
-                            <td>${res.merk_produk}</td>
-                            <td>${res.jenis_lipstik}</td>
-                        </tr>`;
-                    });
+                    temp = `<tr><td colspan="5" class="text-center text-danger">Tidak ada rekomendasi ditemukan</td></tr>`;
                 }
 
                 document.getElementById('list-recommendation').innerHTML = temp;
             }
+
 
             const giveRate = (target, questId, starId, number) => {
                 console.info(questId, starId);

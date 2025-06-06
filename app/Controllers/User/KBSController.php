@@ -25,161 +25,171 @@ class KBSController extends BaseController
     }
 
     public function profile_matching()
+{
+    log_message('debug', '=== MASUK KE FUNGSI PROFILE MATCHING ===');
+
+    $session = session();
+    $result = [];
+
+    $GAP_mapping = [
+        0 => 5.0, 1 => 4.5, -1 => 4.0,
+        2 => 3.5, -2 => 3.0,
+        3 => 2.5, -3 => 2.0,
+        4 => 1.5, -4 => 1.0
+    ];
+
+    $normalize_jenis_bibir = [1 => 1, 9 => 2, 13 => 3, 19 => 4];
+
+    function mapKategoriFinansial($harga)
     {
-        
-        log_message('debug', '=== MASUK KE FUNGSI PROFILE MATCHING ===');
+        if ($harga <= 50000) return 1;
+        if ($harga <= 100000) return 2;
+        if ($harga <= 200000) return 3;
+        return 4;
+    }
 
-        $session = session();
-        $result = [];
-        $GAP_mapping = [
-            0 => 5.0,
-            1 => 4.5,
-            -1 => 4.0,
-            2 => 3.5,
-            -2 => 3.0,
-            3 => 2.5,
-            -3 => 2.0,
-            4 => 1.5,
-            -4 => 1.0
-        ];
+    $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
+    $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
+    $certainty = $session->get('SESS_KBS_LIPSTIK_CERTAINTY');
+    $tone_kulit = (int) $session->get('SESS_KBS_LIPSTIK_TONE_KULIT');
 
-        $normalize_jenis_bibir = [1 => 1, 9 => 2, 13 => 3, 19 => 4];
+    log_message('debug', 'CEK SESSI: kategori_finansial=' . $kategori_finansial . ', jenis_bibir=' . $jenis_bibir . ', certainty=' . $certainty . ', tone_kulit=' . $tone_kulit);
 
-        $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
-        $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
-        $certainty = $session->get('SESS_KBS_LIPSTIK_CERTAINTY');
-        $tone_kulit = (int) $session->get('SESS_KBS_LIPSTIK_TONE_KULIT');
-        log_message('debug', 'CEK SESSI: kategori_finansial=' . $kategori_finansial . ', jenis_bibir=' . $jenis_bibir . ', certainty=' . $certainty . ', tone_kulit=' . $tone_kulit);
+    if (empty($kategori_finansial) || empty($jenis_bibir) || empty($certainty) || empty($tone_kulit)) {
+        return $this->response->setStatusCode(400)->setJSON(['error' => 'Data sesi tidak lengkap']);
+    }
 
-        if (empty($kategori_finansial) || empty($jenis_bibir) || empty($certainty) || empty($tone_kulit)) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Data sesi tidak lengkap']);
-        }
+    if (!isset($normalize_jenis_bibir[$jenis_bibir])) {
+        return $this->response->setStatusCode(400)->setJSON(['error' => 'Jenis bibir tidak valid']);
+    }
 
-        if (!isset($normalize_jenis_bibir[$jenis_bibir])) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Jenis bibir tidak valid']);
-        }
+    $target = [
+        'kategori_finansial' => ((int) $kategori_finansial) - 1,
+        'jenis_bibir' => $normalize_jenis_bibir[$jenis_bibir],
+        'certainty' => (int) (((float) $certainty / 100) * 4),
+        'tone_kulit' => $tone_kulit
+    ];
 
-        $target = [
-            'kategori_finansial' => ((int) $kategori_finansial) - 1,
-            'jenis_bibir' => $normalize_jenis_bibir[$jenis_bibir],
-            'certainty' => (int) (((float) $certainty / 100) * 4),
-            'tone_kulit' => $tone_kulit
-        ];
+    $rekomendasi_data = $this->kbs_m->getRekomendasiData($kategori_finansial, $jenis_bibir, $certainty, $tone_kulit);
+    if (empty($rekomendasi_data)) {
+        return $this->response->setJSON(['error' => 'Rekomendasi data tidak ditemukan']);
+    }
 
-        $alternative = $this->kbs_m->getAllAlternative($jenis_bibir, $tone_kulit);
-        log_message('debug', 'JUMLAH ALTERNATIVE: ' . count($alternative));
+    $matched_ids = array_column($rekomendasi_data, 'id');
+    log_message('debug', 'Matched rekomendasi IDs: ' . json_encode($matched_ids));
 
-        if (count($alternative) < 5) {
-            $result['profile_matching'] = null;
-            $result['products'] = [];
-            return $this->response->setJSON($result);
-        }
+    $alternative = $this->kbs_m->getProductsByRekomendasiIds($matched_ids);
+    log_message('debug', 'Jumlah produk alternatif: ' . count($alternative));
 
-        $normalize_alternative = [];
-        foreach ($alternative as $al) {
-            if (!isset($normalize_jenis_bibir[$al['jenis_bibir']]))
-                continue;
-
-            $normalize_alternative[] = [
-                'id' => $al['id'],
-                'kategori_finansial' => ((int) $al['kategori_finansial']) - 1,
-                'jenis_bibir' => $normalize_jenis_bibir[$al['jenis_bibir']],
-                'certainty' => (int) (((float) $al['certainty'] / 100) * 4),
-                'tone_kulit' => (int) $al['tone_kulit']
-            ];
-        }
-
-        $GAP = [];
-        foreach ($normalize_alternative as $na) {
-            $GAP[] = [
-                'id' => $na['id'],
-                'kategori_finansial' => max(min($na['kategori_finansial'] - $target['kategori_finansial'], 4), -4),
-                'jenis_bibir' => max(min($na['jenis_bibir'] - $target['jenis_bibir'], 4), -4),
-                'certainty' => max(min($na['certainty'] - $target['certainty'], 4), -4),
-                'tone_kulit' => max(min($na['tone_kulit'] - $target['tone_kulit'], 4), -4)
-            ];
-        }
-
-        $konversi = [];
-        foreach ($GAP as $gap) {
-            $konversi[] = [
-                'id' => $gap['id'],
-                'kategori_finansial' => $GAP_mapping[$gap['kategori_finansial']],
-                'jenis_bibir' => $GAP_mapping[$gap['jenis_bibir']],
-                'certainty' => $GAP_mapping[$gap['certainty']],
-                'tone_kulit' => $GAP_mapping[$gap['tone_kulit']]
-            ];
-        }
-
-        $faktor = [];
-        foreach ($konversi as $konv) {
-            $core_faktor = ($konv['kategori_finansial'] + $konv['certainty'] + $konv['tone_kulit']) / 3.0;
-            $secondary_faktor = $konv['jenis_bibir'];
-
-            $faktor[] = [
-                'id' => $konv['id'],
-                'NCF' => $core_faktor,
-                'NSF' => $secondary_faktor
-            ];
-        }
-
-        $final_NT = [];
-        foreach ($faktor as $f) {
-            $final_NT[] = [
-                'id' => (int) $f['id'],
-                'NT' => (0.66 * $f['NCF']) + (0.34 * $f['NSF'])
-            ];
-        }
-
-        if (empty($final_NT)) {
-            return $this->response->setStatusCode(500)->setJSON(['error' => 'Tidak ada hasil valid dari konversi GAP']);
-        }
-
-        $final_data = $this->sort_data($final_NT);
-        $result['profile_matching'] = $final_data;
-
-        $matched_ids = array_column($final_data, 'id');
-        $matched_product_rows = $this->kbs_m->getProductIdsByRecommendationIds($matched_ids);
-        $matched_product_ids = array_column($matched_product_rows, 'id_produk');
-        log_message('debug', 'MATCHED PRODUCT IDS: ' . json_encode($matched_product_ids));
-
-        $fav_products = $this->kbs_m->getAllFavoritedProductIds();
-        $fav_product_ids = array_column($fav_products, 'id_produk');
-        log_message('debug', 'FAVORITE IDS: ' . json_encode($fav_product_ids));
-
-        $final_ids = array_intersect($matched_product_ids, $fav_product_ids);
-        log_message('debug', 'FINAL MATCHED & FAVORITE IDS: ' . json_encode($final_ids));
-
-        if (!empty($final_ids)) {
-            $all_products = $this->kbs_m->getRecommendationProductsByIds($final_ids);
-            log_message('debug', 'ALL FINAL PRODUCTS: ' . json_encode($all_products));
-
-            $filtered_products = array_filter($all_products, function ($product) use ($tone_kulit) {
-                $allowed_tones = array_map('trim', explode(',', $product['id_tk']));
-                $allowed_tones = array_map('intval', $allowed_tones);
-                return in_array((int) $tone_kulit, $allowed_tones);
-            });
-
-            $range = [
-                1 => [0, 50000],
-                2 => [50001, 100000],
-                3 => [100001, 200000],
-                4 => [200001, PHP_INT_MAX],
-            ];
-            list($low, $high) = $range[$kategori_finansial];
-
-            $filtered_products = array_filter($filtered_products, function ($product) use ($low, $high) {
-                return $product['harga'] >= $low && $product['harga'] <= $high;
-            });
-
-        } else {
-            $filtered_products = [];
-        }
-
-        $result['products'] = $filtered_products;
-        log_message('debug', 'FINAL PRODUCTS TO FRONTEND: ' . json_encode($result['products']));
+    if (count($alternative) < 1) {
+        $result['profile_matching'] = null;
+        $result['products'] = [];
         return $this->response->setJSON($result);
     }
+
+    $normalize_alternative = [];
+    foreach ($alternative as $al) {
+        log_message('debug', 'ID PRODUK: ' . $al['id'] . ', ID_JB: ' . $al['id_JB']);
+
+        $ids = explode(',', $al['id_JB']);
+        $valid_ids = array_keys($normalize_jenis_bibir);
+        $intersect = array_intersect($ids, array_map('strval', $valid_ids));
+        if (empty($intersect)) {
+            log_message('debug', 'SKIPPED: ID_JB ' . $al['id_JB'] . ' tidak cocok normalize');
+            continue;
+        }
+
+        $chosen_id = (int) array_shift($intersect);
+        $kategori = mapKategoriFinansial((int) $al['harga']);
+
+        $normalize_alternative[] = [
+            'id' => $al['id'],
+            'kategori_finansial' => $kategori - 1,
+            'jenis_bibir' => $normalize_jenis_bibir[$chosen_id],
+            'certainty' => (int) (((float) $al['certainty'] / 100) * 4),
+            'tone_kulit' => (int) $al['tone_kulit']
+        ];
+    }
+
+    log_message('debug', 'NORMALIZE ALTERNATIVE: ' . json_encode($normalize_alternative));
+
+    $GAP = [];
+    foreach ($normalize_alternative as $na) {
+        $GAP[] = [
+            'id' => $na['id'],
+            'kategori_finansial' => max(min($na['kategori_finansial'] - $target['kategori_finansial'], 4), -4),
+            'jenis_bibir' => max(min($na['jenis_bibir'] - $target['jenis_bibir'], 4), -4),
+            'certainty' => max(min($na['certainty'] - $target['certainty'], 4), -4),
+            'tone_kulit' => max(min($na['tone_kulit'] - $target['tone_kulit'], 4), -4)
+        ];
+    }
+    log_message('debug', 'GAP RAW: ' . json_encode($GAP));
+
+    $konversi = [];
+    foreach ($GAP as $gap) {
+        $konversi[] = [
+            'id' => $gap['id'],
+            'kategori_finansial' => $GAP_mapping[$gap['kategori_finansial']],
+            'jenis_bibir' => $GAP_mapping[$gap['jenis_bibir']],
+            'certainty' => $GAP_mapping[$gap['certainty']],
+            'tone_kulit' => $GAP_mapping[$gap['tone_kulit']]
+        ];
+    }
+
+    $faktor = [];
+    foreach ($konversi as $konv) {
+        $core_faktor = ($konv['kategori_finansial'] + $konv['certainty'] + $konv['tone_kulit']) / 3.0;
+        $secondary_faktor = $konv['jenis_bibir'];
+
+        $faktor[] = [
+            'id' => $konv['id'],
+            'NCF' => $core_faktor,
+            'NSF' => $secondary_faktor
+        ];
+    }
+
+    $final_NT = [];
+    foreach ($faktor as $f) {
+        $final_NT[] = [
+            'id' => (int) $f['id'],
+            'NT' => (0.66 * $f['NCF']) + (0.34 * $f['NSF'])
+        ];
+    }
+    log_message('debug', 'ISI final_NT: ' . json_encode($final_NT));
+
+    usort($final_NT, function($a, $b) {
+        return $b['NT'] <=> $a['NT'];
+    });
+
+    $paling_mirip = $final_NT[0];
+    log_message('debug', 'PALING MIRIP: ' . json_encode($paling_mirip));
+
+    
+    log_message('debug', 'ISI faktor: ' . json_encode($faktor));
+    log_message('debug', 'ISI konversi: ' . json_encode($konversi));
+
+    if (empty($final_NT)) {
+        return $this->response->setStatusCode(500)->setJSON(['error' => 'Tidak ada hasil valid dari konversi GAP']);
+    }
+
+    $final_data = $this->sort_data($final_NT);
+    $result['profile_matching'] = $final_data;
+
+    $matched_ids = array_column($final_data, 'id');
+    $matched_product_rows = $this->kbs_m->getProductIdsByRecommendationIds($matched_ids);
+    $matched_product_ids = array_column($matched_product_rows, 'id_produk');
+
+    log_message('debug', 'MATCHED PRODUCT IDS: ' . json_encode($matched_product_ids));
+
+    $all_products = $this->kbs_m->getRecommendationProductsByIds($matched_product_ids);
+    log_message('debug', 'ALL FINAL PRODUCTS (NO FILTER): ' . json_encode($all_products));
+
+    $result['products'] = $all_products;
+
+    log_message('debug', 'FINAL PRODUCTS TO FRONTEND (NO FILTER): ' . json_encode($result['products']));
+
+    return $this->response->setJSON($result);
+}
 
     public function KBSAlgorithm()
     {

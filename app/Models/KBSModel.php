@@ -186,4 +186,35 @@ class KBSModel extends Model
             ->getResult();
     }
 
+    public function getRekomendasiData($kategori_finansial, $jenis_bibir, $certainty, $tone_kulit) {
+        return $this->db->table('rekomendasi')
+            ->where('kategori_finansial', $kategori_finansial)
+            ->where('jenis_bibir', $jenis_bibir)
+            ->where('certainty', $certainty)
+            ->where('tone_kulit', $tone_kulit)
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getProductsByRekomendasi($id_rekomendasi) {
+        return $this->db->table('rekomendasi_produk')
+            ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
+            ->where('id_rekomendasi', $id_rekomendasi)
+            ->get()
+            ->getResultArray();
+    }
+
+    public function getProductsByRekomendasiIds($ids)
+{
+    return $this->db->table('rekomendasi_produk')
+        ->select('produk.*, rekomendasi.*, rekomendasi_produk.id_rekomendasi')
+        ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
+        ->join('rekomendasi', 'rekomendasi.id = rekomendasi_produk.id_rekomendasi')
+        ->whereIn('rekomendasi_produk.id_rekomendasi', $ids)
+        ->get()
+        ->getResultArray();
+}
+
+
+
 }
