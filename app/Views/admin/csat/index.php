@@ -48,7 +48,6 @@
                                     <thead class="thead-light">
                                         <tr>
                                             <th>#</th>
-                                            <th>User ID</th>
                                             <th>Question ID</th>
                                             <th>Rating</th>
                                             <th>Tanggal</th>
@@ -59,7 +58,6 @@
                                         <?php foreach ($csat_feedback as $cf): ?>
                                             <tr>
                                                 <td><?= $number++; ?></td>
-                                                <td><?= $cf['user_id'] ?></td>
                                                 <td><?= $cf['question_id'] ?></td>
                                                 <td><?= $cf['rating'] ?></td>
                                                 <td><?= $cf['created_at'] ?></td>

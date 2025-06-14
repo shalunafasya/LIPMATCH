@@ -186,11 +186,9 @@ class KBSModel extends Model
             ->getResult();
     }
 
-    public function getRekomendasiData($kategori_finansial, $jenis_bibir, $certainty, $tone_kulit) {
+    public function getRekomendasiData($jenis_bibir, $tone_kulit) {
         return $this->db->table('rekomendasi')
-            ->where('kategori_finansial', $kategori_finansial)
             ->where('jenis_bibir', $jenis_bibir)
-            ->where('certainty', $certainty)
             ->where('tone_kulit', $tone_kulit)
             ->get()
             ->getResultArray();

@@ -31,7 +31,12 @@ class Awal extends BaseController
             return redirect()->back()->with('error', 'Tone kulit belum dipilih!');
         }
 
-        session()->set('sess_lipstik_nama', $nama);
+        session()->set('SESS_KBS_LIPSTIK_NAMA', $nama);
+
+        if (!session()->has('SESS_KBS_LIPSTIK_ID_USER')) {
+            session()->set('SESS_KBS_LIPSTIK_ID_USER', random_int(1000, 999999));
+        }
+
         session()->set('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL', $kategori_uang);
         session()->set('SESS_KBS_LIPSTIK_TONE_KULIT', $tone_kulit);
 

@@ -19,12 +19,17 @@ class CSATModel extends Model
 
     public function getAverageCSAT()
     {
-        $result = $this->db->table($this->table)
-            ->selectAvg('rating', 'average_rating')
-            ->get()
-            ->getRow();
+        $builder = $this->db->table($this->table);
+        $total = $builder->countAll();
+        $positive = $builder->whereIn('rating', [4, 5])->countAllResults();
 
-        return $result ? $result->average_rating : 0;
+        if ($total === 0) {
+            return 0;
+        }
+
+        $csat = ($positive / $total) * 100;
+
+        return round($csat, 2); 
     }
 
     public function getAllFeedback()

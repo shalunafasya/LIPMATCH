@@ -45,10 +45,17 @@
                 <i class="fa fa-bars"></i>
             </button>
             <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-">
-                <h1 class="h6 mb-0 text-primary"
-                    style="font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 600; letter-spacing: 1px;">
-                    LIPMATCH</h1>
+            
+            <h1 class="h6 mb-0 text-primary"
+                style="font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 600; letter-spacing: 1px;">
+                LIPMATCH
+            </h1>
+
+            <a href="<?= base_url('user/awal') ?>" class="btn btn-danger btn-sm"
+            style="position: fixed; top: 15px; right: 20px; z-index: 9999; font-family: 'Poppins', sans-serif;">
+            <i class="fas fa-sign-out-alt"></i> Keluar
+            </a>    
+
             </div>
             <div class="row ml-3"></div>
             </li>
@@ -61,7 +68,7 @@
                         <div class="table-responsive float-right">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <h1 class="text-uppercase">
-                                    <?= session('sess_lipstik_nama') ? 'Hi.. ' . session('sess_lipstik_nama') : ''; ?>
+                                    <?= session('SESS_KBS_LIPSTIK_NAMA') ? 'Hi.. ' . session('SESS_KBS_LIPSTIK_NAMA') : ''; ?>
                                 </h1>
                                 <h1 class="h6 ml-1 mb-3 text-gray-800">hasil skor kondisi bibir anda sebagai berikut :
                                 </h1>
@@ -193,7 +200,7 @@
             <div class="modal-dialog" style="min-width: 80% !important">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="recommendationModalLabel">Rekomendasi Lain</h5>
+                        <h5 class="modal-title" id="recommendationModalLabel">Rekomendasi Untuk Kamu</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

@@ -14,15 +14,23 @@ class KBSController extends BaseController
         $this->kbs_m = new KBSModel();
     }
 
-    private function sort_data($data)
-    {
-        $skor = [];
-        foreach ($data as $dt) {
-            $skor[$dt['id']] = $dt['NT'];
-        }
-        array_multisort($skor, SORT_DESC, $data);
-        return $data;
+    public function sort_data($data)
+{
+    // Buat array NT dan ID terpisah
+    $nt = array_column($data, 'NT');
+    $id = array_column($data, 'id');
+
+    // Pastikan jumlahnya sama sebelum sort
+    if (count($nt) !== count($id)) {
+        log_message('error', 'Jumlah NT dan ID tidak konsisten di sort_data().');
+        return $data; // balikin aja tanpa sort daripada error
     }
+
+    // Lakukan sort descending berdasarkan NT
+    array_multisort($nt, SORT_DESC, $data);
+
+    return $data;
+}
 
     public function profile_matching()
 {
@@ -70,7 +78,7 @@ class KBSController extends BaseController
         'tone_kulit' => $tone_kulit
     ];
 
-    $rekomendasi_data = $this->kbs_m->getRekomendasiData($kategori_finansial, $jenis_bibir, $certainty, $tone_kulit);
+    $rekomendasi_data = $this->kbs_m->getRekomendasiData( $jenis_bibir,  $tone_kulit);
     if (empty($rekomendasi_data)) {
         return $this->response->setJSON(['error' => 'Rekomendasi data tidak ditemukan']);
     }
@@ -112,6 +120,9 @@ class KBSController extends BaseController
     }
 
     log_message('debug', 'NORMALIZE ALTERNATIVE: ' . json_encode($normalize_alternative));
+    $normalize_alternative = array_map("unserialize", array_unique(array_map("serialize", $normalize_alternative)));
+
+    log_message('debug', 'NORMALIZE ALTERNATIVE (UNIQUE): ' . json_encode($normalize_alternative));
 
     $GAP = [];
     foreach ($normalize_alternative as $na) {
@@ -138,8 +149,8 @@ class KBSController extends BaseController
 
     $faktor = [];
     foreach ($konversi as $konv) {
-        $core_faktor = ($konv['kategori_finansial'] + $konv['certainty'] + $konv['tone_kulit']) / 3.0;
-        $secondary_faktor = $konv['jenis_bibir'];
+        $core_faktor = ($konv['kategori_finansial'] + $konv['jenis_bibir'] + $konv['tone_kulit']) / 3.0;
+        $secondary_faktor = $konv['certainty'];
 
         $faktor[] = [
             'id' => $konv['id'],
@@ -255,6 +266,7 @@ class KBSController extends BaseController
 
 
         $rekomendasi_data = [
+            'id_user' => $session->get('SESS_KBS_LIPSTIK_ID_USER'),
             'kategori_finansial' => $kategori_finansial,
             'jenis_bibir' => $jenis_bibir,
             'tone_kulit' => $tone_kulit,
@@ -300,6 +312,7 @@ class KBSController extends BaseController
             if (!$this->kbs_m->submitSusAnswer($temp)) {
                 return $this->response->setJSON(['status' => 'gagal']);
             }
+
         }
         session()->set('has_submit', true);
         return redirect()->to('User/Jenis_Bibir/rekomendasi')->with('show_csat', true);

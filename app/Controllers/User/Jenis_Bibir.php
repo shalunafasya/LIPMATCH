@@ -51,6 +51,7 @@ class Jenis_Bibir extends BaseController
 
         foreach ($ket_bobot as $no => $id_pertanyaan) {
             $dataInsert = [
+                'id_user' => session()->get('SESS_KBS_LIPSTIK_ID_USER'),
                 'id_pertanyaan' => $id_pertanyaan,
                 'nomor_soal' => $no,
                 'jawaban' => $bobot[$no][0]->bobot,
@@ -151,7 +152,7 @@ class Jenis_Bibir extends BaseController
         session()->set('SESS_KBS_LIPSTIK_TONE_KULIT', $tone_kulit);
 
         $dataKondisiBibir = [
-            'id_jawaban' => $lastInsertId,
+            'id_jawaban' => session()->get('SESS_KBS_LIPSTIK_ID_USER'),
             'normal' => $p_normal,
             'kering' => $p_kering,
             'gelap' => $p_gelap,
