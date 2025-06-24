@@ -89,11 +89,79 @@ class KBSModel extends Model
         return $this->db->insertID();
     }
 
+
+    public function deleteProductFromUserRecommendation($id_user, $id_produk)
+    {
+        $builder = $this->db->table('rekomendasi')
+            ->select('id')
+            ->where('id_user', $id_user)
+            ->orderBy('created_at', 'DESC') 
+            ->limit(1);
+        $query = $builder->get();
+        $rekomendasi = $query->getRow();
+
+        if (!$rekomendasi) {
+            return false; 
+        }
+
+        return $this->db->table('rekomendasi_produk')
+            ->where('id_rekomendasi', $rekomendasi->id)
+            ->where('id_produk', $id_produk)
+            ->delete();
+    }
+
+
+    public function getProductById($id)
+    {
+        return $this->db->table('produk')->where('id_produk', $id)->get()->getRow();
+    }
+
+    public function incrementRekomendasiProduk($id_produk)
+    {
+        return $this->db->table('produk')
+            ->where('id_produk', $id_produk)
+            ->set('rekomendasi', 'rekomendasi + 1', false)
+            ->update();
+    }
+
+    public function decrementRekomendasiProduk($id_produk)
+    {
+        return $this->db->table('produk')
+            ->where('id_produk', $id_produk)
+            ->set('rekomendasi', 'GREATEST(rekomendasi - 1, 0)', false)
+            ->update();
+    }
+
+    public function getRecommendationByUser($id_user)
+{
+    return $this->db->table('rekomendasi')
+        ->where('id_user', $id_user)
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->getRow();
+}
+
+public function checkProductInRecommendation($id_rekomendasi, $id_produk)
+{
+    return $this->db->table('rekomendasi_produk')
+        ->where('id_rekomendasi', $id_rekomendasi)
+        ->where('id_produk', $id_produk)
+        ->get()
+        ->getRow();
+}
+
     public function saveProductRecommendation($data)
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return $this->db->table('rekomendasi_produk')->insert($data);
+        
+        $result = $this->db->table('rekomendasi_produk')->insert($data);
+
+        if (!$result) {
+        log_message('error', 'DB ERROR: ' . json_encode($this->db->error()));
+    }
+
+    return $result;
     }
 
     public function addSingleProductScore($id_produk)
@@ -154,7 +222,7 @@ class KBSModel extends Model
         }
 
         $builder = $this->db->table('produk');
-        $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk')
+        $builder->select('produk.id_produk, jenis_lipstik.jenis_lipstik as jenis_lipstik, produk.merk_produk, produk.nama_produk, produk.harga, produk.rekomendasi, produk.id_tk, produk.gambar')
             ->join('jenis_lipstik', 'jenis_lipstik.id_jl = produk.jenis_lipstik')
             ->join('jenis_bibir', 'produk.id_JB = jenis_bibir.id_JB')
             ->whereIn('produk.id_produk', $product_ids)
@@ -186,10 +254,11 @@ class KBSModel extends Model
             ->getResult();
     }
 
-    public function getRekomendasiData($jenis_bibir, $tone_kulit) {
+    public function getRekomendasiData($jenis_bibir, $tone_kulit, $kategori_finansial) {
         return $this->db->table('rekomendasi')
             ->where('jenis_bibir', $jenis_bibir)
             ->where('tone_kulit', $tone_kulit)
+            ->where('kategori_finansial', $kategori_finansial)
             ->get()
             ->getResultArray();
     }

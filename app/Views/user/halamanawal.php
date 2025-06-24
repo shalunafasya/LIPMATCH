@@ -47,7 +47,7 @@
             </div>
             <div class="center">
                 <h1 style="text-align:center;" class=" mb-0 text-primary">LIPMATCH</h1>
-                <h3 style="text-align:center;" class=" mt-2 ml-1 mb-3 text-primary ">silahkan masukan biodata anda </h3>
+                <h3 style="text-align:center;" class=" mt-2 ml-1 mb-3 text-primary ">silahkan masukan data anda </h3>
                 <form method="post" action="<?= site_url('User/Awal/simpan_nama') ?>">
                     <?= csrf_field() ?>
                     <input class="form-control" type="text" name="nama" placeholder="Masukkan nama anda..." />

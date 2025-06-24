@@ -29,6 +29,13 @@ $routes->post('User/KBSController/submit_sus_feedback', 'User\KBSController::sub
 $routes->post('User/KBSController/submit_csat_feedback', 'User\KBSController::submit_csat_feedback');
 $routes->get('User/KBSController/product_button/(:any)/(:num)', 'User\KBSController::product_button/$1/$2');
 $routes->get('User/KBSController/save_my_recommendation/(:segment)', 'User\KBSController::save_my_recommendation/$1');
+$routes->get('User/KBSController/delete_my_recommendation/(:num)', 'User\KBSController::delete_my_recommendation/$1');
+$routes->get('User/KBSController/get_product_description/(:num)', 'User\KBSController::get_product_description/$1');
+$routes->get('User/KBSController/get_rekomendasi_terbaru', 'User\KBSController::get_rekomendasi_terbaru');
+
+
+
+
 
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
     // Produk

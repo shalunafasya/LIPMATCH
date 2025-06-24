@@ -125,14 +125,14 @@
                             <div id="session1">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
                                     <div class="form-group">
-                                        <label><?= $i . ". Apakah " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
+                                        <label><?= $i . ". " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
                                         <div class="btn-group-toggle d-flex flex-wrap">
                                             <?php
                                             $options = [
-                                                'kriteria tidak terlihat' => 'Tidak Terlihat',
-                                                'kriteria kurang terlihat' => 'Kurang Terlihat',
-                                                'kriteria cukup terlihat' => 'Cukup Terlihat',
-                                                'kriteria jelas terlihat' => 'Jelas Terlihat'
+                                                'kriteria tidak terlihat' => 'Tidak Setuju',
+                                                'kriteria kurang terlihat' => 'Kurang Setuju',
+                                                'kriteria cukup terlihat' => 'Cukup Setuju',
+                                                'kriteria jelas terlihat' => 'Sangat Setuju'
                                             ];
                                             foreach ($options as $val => $label): ?>
                                                 <label class="pretty-btn m-1 flex-fill text-center">
@@ -154,7 +154,7 @@
                             <div id="session2" style="display: none;">
                                 <?php for ($i = 6; $i <= 10; $i++): ?>
                                     <div class="form-group">
-                                        <label><?= $i . ". Apakah " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
+                                        <label><?= $i . ". " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
                                         <div class="btn-group-toggle d-flex flex-wrap">
                                             <?php foreach ($options as $val => $label): ?>
                                                 <label class="pretty-btn m-1 flex-fill text-center">
@@ -180,7 +180,7 @@
                             <div id="session3" style="display: none;">
                                 <?php for ($i = 11; $i <= 15; $i++): ?>
                                     <div class="form-group">
-                                        <label><?= $i . ". Apakah " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
+                                        <label><?= $i . ". " . $List_Kriteria[$i - 1]['kriteria'] ?></label>
                                         <div class="btn-group-toggle d-flex flex-wrap">
                                             <?php foreach ($options as $val => $label): ?>
                                                 <label class="pretty-btn m-1 flex-fill text-center">

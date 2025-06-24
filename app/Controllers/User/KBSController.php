@@ -78,7 +78,7 @@ class KBSController extends BaseController
         'tone_kulit' => $tone_kulit
     ];
 
-    $rekomendasi_data = $this->kbs_m->getRekomendasiData( $jenis_bibir,  $tone_kulit);
+    $rekomendasi_data = $this->kbs_m->getRekomendasiData( $jenis_bibir,  $tone_kulit, $kategori_finansial);
     if (empty($rekomendasi_data)) {
         return $this->response->setJSON(['error' => 'Rekomendasi data tidak ditemukan']);
     }
@@ -184,7 +184,8 @@ class KBSController extends BaseController
     }
 
     $final_data = $this->sort_data($final_NT);
-    $result['profile_matching'] = $final_data;
+    $top5 = array_slice($final_data, 0, 5); // ambil 5 teratas
+    $result['profile_matching'] = $top5;
 
     $matched_ids = array_column($final_data, 'id');
     $matched_product_rows = $this->kbs_m->getProductIdsByRecommendationIds($matched_ids);
@@ -241,32 +242,38 @@ class KBSController extends BaseController
         return $this->response->setJSON($result_products);
     }
 
-    public function product_button($action, $id)
+    public function get_product_description($id_produk)
     {
-        $status = 'invalid';
+        $product = $this->kbs_m->getProductById($id_produk);
 
-        if ($action === "add") {
-            $status = $this->kbs_m->addSingleProductScore($id) ? 'berhasil' : 'gagal';
-        } elseif ($action === "remove") {
-            $status = $this->kbs_m->removeSingleProductScore($id) ? 'berhasil' : 'gagal';
+        if ($product) {
+            return $this->response->setJSON([
+                'status' => 'ok',
+                'nama_produk' => $product->nama_produk,
+                'deskripsi' => $product->deskripsi
+            ]);
         }
 
-        return $this->response->setJSON(['status' => $status]);
+        return $this->response->setJSON(['status' => 'not_found']);
     }
 
-    public function save_my_recommendation($str_id)
-    {
-        $products = array_filter(explode('_', $str_id));
+    public function save_my_recommendation($id_produk)
+{
+    $session = session();
+    $id_user = $session->get('SESS_KBS_LIPSTIK_ID_USER');
+    $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
+    $certainty = $session->get('SESS_KBS_LIPSTIK_CERTAINTY');
+    $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
+    $tone_kulit = (int) $session->get('SESS_KBS_LIPSTIK_TONE_KULIT');
 
-        $session = session();
-        $kategori_finansial = $session->get('SESS_KBS_LIPSTIK_KATEGORI_FINANSIAL');
-        $certainty = $session->get('SESS_KBS_LIPSTIK_CERTAINTY');
-        $jenis_bibir = $session->get('SESS_KBS_LIPSTIK_JENIS_BIBIR');
-        $tone_kulit = (int) $session->get('SESS_KBS_LIPSTIK_TONE_KULIT');
+    $existingRekomendasi = $this->kbs_m->getRecommendationByUser($id_user);
 
-
+    if ($existingRekomendasi) {
+        $rekomendasi_id = $existingRekomendasi->id;
+        log_message('debug', 'PAKAI REKOMENDASI LAMA id=' . $rekomendasi_id);
+    } else {
         $rekomendasi_data = [
-            'id_user' => $session->get('SESS_KBS_LIPSTIK_ID_USER'),
+            'id_user' => $id_user,
             'kategori_finansial' => $kategori_finansial,
             'jenis_bibir' => $jenis_bibir,
             'tone_kulit' => $tone_kulit,
@@ -276,24 +283,61 @@ class KBSController extends BaseController
         ];
 
         $rekomendasi_id = $this->kbs_m->saveRecommendation($rekomendasi_data);
-
-        foreach ($products as $product) {
-            $product_data = [
-                'id_produk' => $product,
-                'id_rekomendasi' => $rekomendasi_id,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ];
-
-            $result = $this->kbs_m->saveProductRecommendation($product_data);
-
-            if (!$result) {
-                return $this->response->setJSON(['status' => 'gagal']);
-            }
-        }
-
-        return $this->response->setJSON(['status' => 'berhasil']);
+        log_message('debug', 'BUAT REKOMENDASI BARU id=' . $rekomendasi_id);
     }
+
+    $sudahAda = $this->kbs_m->checkProductInRecommendation($rekomendasi_id, $id_produk);
+    if ($sudahAda) {
+        log_message('debug', 'PRODUK SUDAH ADA di rekomendasi_produk');
+        return $this->response->setJSON(['status' => 'sudah_ada']);
+    }
+
+    $product_data = [
+        'id_produk' => (int)$id_produk,
+        'id_rekomendasi' => $rekomendasi_id,
+        'created_at' => date('Y-m-d H:i:s'),
+        'updated_at' => date('Y-m-d H:i:s')
+    ];
+
+    $result = $this->kbs_m->saveProductRecommendation($product_data);
+
+    log_message('debug', 'INSERT PRODUCT_DATA: ' . json_encode($product_data));
+    log_message('debug', 'DATA YANG MAU DIINSERT KE rekomendasi_produk: ' . json_encode($product_data));
+
+    if (!$result) {
+        log_message('error', 'GAGAL INSERT rekomendasi_produk!');
+        return $this->response->setJSON(['status' => 'gagal']);
+    }
+
+    $this->kbs_m->incrementRekomendasiProduk($id_produk);
+
+    return $this->response->setJSON(['status' => 'berhasil']);
+}
+
+
+    public function delete_my_recommendation($id_produk)
+{
+    $id_user = session()->get('SESS_KBS_LIPSTIK_ID_USER');
+    
+    log_message('debug', 'Delete request masuk: user = ' . $id_user . ', produk = ' . $id_produk);
+    if (!$id_user || !$id_produk) {
+        return $this->response->setJSON([
+            'status' => 'gagal',
+            'message' => 'User atau produk tidak dikenali'
+        ]);
+    }
+
+    $hapus = $this->kbs_m->deleteProductFromUserRecommendation($id_user, $id_produk);
+
+    if ($hapus) {
+        $this->kbs_m->decrementRekomendasiProduk($id_produk);
+    }
+
+    return $this->response->setJSON([
+        'status' => $hapus ? 'berhasil' : 'gagal',
+        'message' => $hapus ? 'Dihapus yaa' : 'Gagal hapus'
+    ]);
+}
 
     public function submit_sus_feedback()
     {
