@@ -254,11 +254,47 @@ public function checkProductInRecommendation($id_rekomendasi, $id_produk)
             ->getResult();
     }
 
-    public function getRekomendasiData($jenis_bibir, $tone_kulit, $kategori_finansial) {
-        return $this->db->table('rekomendasi')
-            ->where('jenis_bibir', $jenis_bibir)
-            ->where('tone_kulit', $tone_kulit)
-            ->where('kategori_finansial', $kategori_finansial)
+    public function getRekomendasiDataFiltered($kategori_finansial, $jenis_bibir, $tone_kulit) {
+        $minHarga = 0;
+        $maxHarga = 0;
+
+        if ($kategori_finansial == 1) {
+            $maxHarga = 50000;
+        } elseif ($kategori_finansial == 2) {
+            $minHarga = 50001;
+            $maxHarga = 100000;
+        } elseif ($kategori_finansial == 3) {
+            $minHarga = 100001;
+            $maxHarga = 200000;
+        } else {
+            $minHarga = 200001;
+            $maxHarga = 10000000;  // misal batas atasnya 10 juta biar aman
+        }
+        return $this->db->table('rekomendasi_produk as rp')
+        ->select('p.id_produk, p.harga, p.id_JB, r.tone_kulit')
+        ->join('produk as p', 'p.id_produk = rp.id_produk')
+        ->join('rekomendasi as r', 'r.id = rp.id_rekomendasi')
+        ->where('r.kategori_finansial', $kategori_finansial)
+        ->where('p.harga >=', $minHarga)
+        ->where('p.harga <=', $maxHarga)
+        ->where("FIND_IN_SET($jenis_bibir, p.id_JB) >", 0)
+        ->where("FIND_IN_SET($tone_kulit, p.id_tk) >", 0)
+        ->get()
+        ->getResultArray();
+    }
+
+    public function getProductsByProductIds($product_ids)
+    {
+        if (empty($product_ids)) {
+            return [];
+        }
+
+        return $this->db->table('produk as p')
+            ->select('p.id_produk, p.nama_produk, p.harga, p.id_JB, p.gambar, p.merk_produk, jl.jenis_lipstik, p.rekomendasi,  rp.id_rekomendasi, r.certainty, r.tone_kulit')
+            ->join('rekomendasi_produk as rp', 'rp.id_produk = p.id_produk')
+            ->join('rekomendasi as r', 'r.id = rp.id_rekomendasi')
+            ->join('jenis_lipstik as jl', 'jl.id_jl = p.jenis_lipstik')
+            ->whereIn('p.id_produk', $product_ids)
             ->get()
             ->getResultArray();
     }
@@ -272,16 +308,13 @@ public function checkProductInRecommendation($id_rekomendasi, $id_produk)
     }
 
     public function getProductsByRekomendasiIds($ids)
-{
-    return $this->db->table('rekomendasi_produk')
-        ->select('produk.*, rekomendasi.*, rekomendasi_produk.id_rekomendasi')
-        ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
-        ->join('rekomendasi', 'rekomendasi.id = rekomendasi_produk.id_rekomendasi')
-        ->whereIn('rekomendasi_produk.id_rekomendasi', $ids)
-        ->get()
-        ->getResultArray();
-}
-
-
-
+    {
+        return $this->db->table('rekomendasi_produk')
+            ->select('produk.*, rekomendasi.*, rekomendasi_produk.id_rekomendasi')
+            ->join('produk', 'produk.id_produk = rekomendasi_produk.id_produk')
+            ->join('rekomendasi', 'rekomendasi.id = rekomendasi_produk.id_rekomendasi')
+            ->whereIn('rekomendasi_produk.id_rekomendasi', $ids)
+            ->get()
+            ->getResultArray();
+    }
 }

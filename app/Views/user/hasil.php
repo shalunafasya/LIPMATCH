@@ -224,7 +224,7 @@
                                 </div>
                             <?php endforeach; ?>
                             <div id="recommendation-container" class="mt-5 mb-5 p-4 rounded shadow-sm" 
-                                style="background-color: #fef9f9; border-top: 2px dashed #ffb3b3;">
+                                style="background-color: #fef9f9; border-top: 2px dashed #ffb3b3; width: 100%">
                                 <h6 class="text-center mb-4" style="
                                     font-family: 'Poppins', sans-serif;
                                     font-weight: 500;
@@ -464,66 +464,67 @@
 
 
             const showProfileMatchRecommendation = async () => {
-    console.info('Algoritma dijalankan...');
-    const spinner = document.getElementById('loading-spinner');
-    const listContainer = document.getElementById('recommendation-list');
+                console.info('Algoritma dijalankan...');
+                const spinner = document.getElementById('loading-spinner');
+                const listContainer = document.getElementById('recommendation-list');
 
-    if (spinner) spinner.style.display = 'block';
-    if (listContainer) listContainer.innerHTML = '';
-    const result = await getProfileMatchingRecommendation();
+                if (spinner) spinner.style.display = 'block';
+                if (listContainer) listContainer.innerHTML = '';
+                const result = await getProfileMatchingRecommendation();
+                console.log('result', result);
 
-    let html = ``;
+                let html = ``;
 
-    if (result.products && result.products.length > 0) {
-        html += `<div class="row mt-4">`;
-
-        result.products.slice(0, 5).forEach((res, index) => {
-            html += `
-                <div class="col-6 col-sm-4 col-md-3 col-lg-2-4 mb-3 custom-card">
-                    <div class="card">
-                        <img class="card-img-top" src="${'<?= base_url("/assets/image/produk/") ?>' + res.gambar}">
-                        <div class="card-body" style="height: 135px">
-                            <div class="row mb-1">
-                                <div class="col-6">
-                                    <span class="badge badge-pill badge-warning">
-                                        ${getRankingEmoji(index)} #${index + 1}
-                                    </span>
-                                    <span class="badge badge-danger badge-sm">${res.jenis_lipstik}</span>
-                                </div>
-                                <div class="col-6 text-right">
-                                    <small>
-                                        <i class="fas fa-fw fa-heart text-danger"></i>
-                                        <span class="text-danger">${res.rekomendasi}</span>
-                                    </small>
+                if (result.products && result.products.length > 0) {
+                    html += `<div class="row mt-4">`;
+                    console.log(result.products);
+                    result.products.slice(0, 5).forEach((res, index) => {
+                        html += `
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2-4 mb-3 custom-card">
+                                <div class="card">
+                                    <img class="card-img-top" src="${'<?= base_url("/assets/image/produk/") ?>' + res.gambar}">
+                                    <div class="card-body" style="height: 135px">
+                                        <div class="row mb-1">
+                                            <div class="col-6">
+                                                <span class="badge badge-pill badge-warning">
+                                                    ${getRankingEmoji(index)} #${index + 1}
+                                                </span>
+                                                <span class="badge badge-danger badge-sm">${res.jenis_lipstik}</span>
+                                            </div>
+                                            <div class="col-6 text-right">
+                                                <small>
+                                                    <i class="fas fa-fw fa-heart text-danger"></i>
+                                                    <span class="text-danger">${res.rekomendasi}</span>
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <span class="text-muted" style="font-size: 12px;">Rp ${parseInt(res.harga).toLocaleString('id-ID')}</span>
+                                        <span class="float-right text-muted font-weight-bold" style="font-size: 11px;">
+                                            <sup class="badge badge-sm badge-primary">${res.merk_produk}</sup>
+                                        </span>
+                                        <p class="mt-1 card-text font-weight-bold" style="font-size: 12px;">${res.nama_produk}</p>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <button 
+                                            class="btn btn-sm px-3 py-1" 
+                                            style="background-color:rgb(250, 187, 218); color: white; font-weight: bold; border-radius: 12px; font-size: 11px;" 
+                                            onclick="showDescription(${res.id_produk})">
+                                            Description
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-muted" style="font-size: 12px;">Rp ${parseInt(res.harga).toLocaleString('id-ID')}</span>
-                            <span class="float-right text-muted font-weight-bold" style="font-size: 11px;">
-                                <sup class="badge badge-sm badge-primary">${res.merk_produk}</sup>
-                            </span>
-                            <p class="mt-1 card-text font-weight-bold" style="font-size: 12px;">${res.nama_produk}</p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button 
-                                class="btn btn-sm px-3 py-1" 
-                                style="background-color:rgb(250, 187, 218); color: white; font-weight: bold; border-radius: 12px; font-size: 11px;" 
-                                onclick="showDescription(${res.id_produk})">
-                                Description
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+                        `;
+                    });
 
-        html += `</div>`;
-    } else {
-        html = `<tr><td colspan="5" class="text-center text-danger">Tidak ada rekomendasi ditemukan</td></tr>`;
-    }
+                    html += `</div>`;
+                } else {
+                    html = `<tr><td colspan="5" class="text-center text-danger">Tidak ada rekomendasi ditemukan</td></tr>`;
+                }
 
-    if (spinner) spinner.style.display = 'none';
-    if (listContainer) listContainer.innerHTML = html;
-};
+                if (spinner) spinner.style.display = 'none';
+                if (listContainer) listContainer.innerHTML = html;
+            };
 
 
             const giveRate = (target, questId, starId, number) => {
