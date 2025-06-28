@@ -174,41 +174,51 @@ class KBSController extends BaseController
         }
         log_message('debug', 'ISI final_NT: ' . json_encode($final_NT));
 
-        usort($final_NT, function($a, $b) {
+        $unique_final_NT = [];
+        foreach ($final_NT as $item) {
+            $id = $item['id'];
+            if (!isset($unique_final_NT[$id]) || $item['NT'] > $unique_final_NT[$id]['NT']) {
+                $unique_final_NT[$id] = $item;
+            }
+        }
+        $unique_final_NT = array_values($unique_final_NT);
+        
+        usort($unique_final_NT, function($a, $b) {
             return $b['NT'] <=> $a['NT'];
         });
 
-        $paling_mirip = $final_NT[0];
-        log_message('debug', 'PALING MIRIP: ' . json_encode($paling_mirip));
-
-        
-        log_message('debug', 'ISI faktor: ' . json_encode($faktor));
-        log_message('debug', 'ISI konversi: ' . json_encode($konversi));
-
-        if (empty($final_NT)) {
-            return $this->response->setStatusCode(500)->setJSON(['error' => 'Tidak ada hasil valid dari konversi GAP']);
-        }
-
-        $final_data = $this->sort_data($final_NT);
-        $top5 = array_slice($final_data, 0, 5); 
+        $top5 = array_slice($unique_final_NT, 0, 5); 
         $result['profile_matching'] = $top5;
 
-        $matched_ids = array_column($final_data, 'id');
-        
-        $all_products = $this->kbs_m->getProductsByProductIds($matched_ids);
-        log_message('debug', 'ALL FINAL PRODUCTS (NO FILTER): ' . json_encode($all_products));
+        $top5_ids = array_column($top5, 'id');
+        $all_products = $this->kbs_m->getProductsByProductIds($top5_ids);
+        log_message('debug', 'ALL FINAL PRODUCTS: ' . json_encode($all_products));
 
-        // Filter produk supaya id_produk unik (hapus duplikat)
-        $unique_products = [];
-        foreach ($all_products as $product) {
-            $unique_products[$product['id_produk']] = $product;
+        $products_ranked = [];
+        foreach ($top5_ids as $id) {
+            foreach ($all_products as $product) {
+                if ($product['id_produk'] == $id) {
+                        $products_ranked[] = $product;
+                        break;
+                    }
+            }
         }
-        $all_products = array_values($unique_products);
 
-
+        $result['products_ranked'] = $products_ranked;
         $result['products'] = $all_products;
 
         log_message('debug', 'FINAL PRODUCTS TO FRONTEND (NO FILTER): ' . json_encode($result['products']));
+        log_message('debug', 'PALING MIRIP: ' . json_encode($top5[0]));
+
+        $log_urutan_top5 = [];
+        foreach ($top5 as $item) {
+            $log_urutan_top5[] = [
+                'id' => $item['id'],
+                'id_rekomendasi' => $item['id_rekomendasi'],
+                'NT' => $item['NT']
+            ];
+        }
+        log_message('debug', 'URUTAN TOP 5 PRODUK FINAL: ' . json_encode($log_urutan_top5));
 
         return $this->response->setJSON($result);
     }

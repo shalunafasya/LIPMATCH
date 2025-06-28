@@ -90,6 +90,18 @@
     background-color:rgb(255, 196, 0);
     color: white;
     font-weight: bold;
+
+}
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+}
+
+body {
+    padding-top: 70px;  /* Sesuaikan dengan tinggi navbarmu */
 }
 
 </style>
@@ -104,7 +116,7 @@
     <!-- Main Content -->
     <div id="content">
         <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow fixed-top">
             <!-- Sidebar Toggle (Topbar) -->
             <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                 <i class="fa fa-bars"></i>
@@ -126,14 +138,33 @@
             </li>
             </ul>
         </nav>
+                <?php
+        // Mapping ID Jenis Bibir
+        $kondisi_mapping = [
+            1 => 'Normal',
+            9 => 'Kering',
+            13 => 'Gelap',
+            19 => 'Kombinasi'
+        ];
+        ?>
         <div class="container-fluid">
             <div class="container">
                 <div class="card rounded-lg mt-5 mb-5">
                     <div class="card-body">
                         <div class="table-responsive float-right">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <h1 class="text-uppercase">
-                                    <?= session('SESS_KBS_LIPSTIK_NAMA') ? 'Hi.. ' . session('SESS_KBS_LIPSTIK_NAMA') : ''; ?>
+                                <h1 style="
+                                    font-family: 'Poppins', sans-serif;
+                                    color: #d63384;
+                                    font-size: 28px;
+                                    font-weight: 600;
+                                    text-transform: uppercase;
+                                    letter-spacing: 1px;
+                                    padding: 12px 20px;
+                                    border-radius: 15px;
+                                    display: inline-block;
+                                ">
+                                    <?= session('SESS_KBS_LIPSTIK_NAMA') && isset($kondisi_mapping[session('SESS_KBS_LIPSTIK_JENIS_BIBIR')]) ? 'Hi.. ' . session('SESS_KBS_LIPSTIK_NAMA') . '! Kondisi bibir anda adalah ' . $kondisi_mapping[session('SESS_KBS_LIPSTIK_JENIS_BIBIR')] . '✨' : ''; ?>
                                 </h1>
                                 <h1 class="h6 ml-1 mb-3 text-gray-800">hasil skor kondisi bibir anda sebagai berikut :
                                 </h1>
@@ -147,10 +178,18 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><?= number_format($p_normal, 2) ?>%</td>
-                                        <td><?= number_format($p_kering, 2) ?>%</td>
-                                        <td><?= number_format($p_gelap, 2) ?>%</td>
-                                        <td><?= number_format($p_kombinasi, 2) ?>%</td>
+                                        <td <?= session('SESS_KBS_LIPSTIK_JENIS_BIBIR') == 1 ? 'style="background-color: #ffe6f0; font-weight:bold; color:#d63384;"' : '' ?>>
+                                            <?= number_format($p_normal, 2) ?>%
+                                        </td>
+                                        <td <?= session('SESS_KBS_LIPSTIK_JENIS_BIBIR') == 9 ? 'style="background-color: #ffe6f0; font-weight:bold; color:#d63384;"' : '' ?>>
+                                            <?= number_format($p_kering, 2) ?>%
+                                        </td>
+                                        <td <?= session('SESS_KBS_LIPSTIK_JENIS_BIBIR') == 13 ? 'style="background-color: #ffe6f0; font-weight:bold; color:#d63384;"' : '' ?>>
+                                            <?= number_format($p_gelap, 2) ?>%
+                                        </td>
+                                        <td <?= session('SESS_KBS_LIPSTIK_JENIS_BIBIR') == 19 ? 'style="background-color: #ffe6f0; font-weight:bold; color:#d63384;"' : '' ?>>
+                                            <?= number_format($p_kombinasi, 2) ?>%
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -159,7 +198,7 @@
                     <h1 class="h6 ml-5 mb-3 text-danger font-italic">*catatan : untuk hasil yang lebih jelas, anda bisa
                         melakukan konsultasi langsung dengan ahli </h1>
                     <div class="container">
-                        <div class="row my-4">
+                        <div class="row my-1">
                         <div class="col-12 d-flex justify-content-end">
                             <button class="btn btn-light shadow-sm px-4 py-2 fw-bold" data-toggle="modal" data-target="#filterModal" style="border-radius: 20px; color: #e87bb2; border: 2px solid #e87bb2;">
                             <i class="fas fa-sliders-h me-1"></i> Filter
@@ -475,10 +514,10 @@
 
                 let html = ``;
 
-                if (result.products && result.products.length > 0) {
+                if (result.products_ranked && result.products_ranked.length > 0) {
                     html += `<div class="row mt-4">`;
                     console.log(result.products);
-                    result.products.slice(0, 5).forEach((res, index) => {
+                    result.products_ranked.forEach((res, index) => {
                         html += `
                             <div class="col-6 col-sm-4 col-md-3 col-lg-2-4 mb-3 custom-card">
                                 <div class="card">
